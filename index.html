@@ -1,93 +1,507 @@
 <!DOCTYPE html>
-<html lang="es">
+<!--
+  =====================================================================
+  HELLMED: Pulse of the Damned — Landing page oficial
+  Proyecto: UT de Nayarit · IDGS
+  Archivo: index.html  →  ESQUELETO de la página (estructura y contenido)
+  Los estilos viven en css/styles.css y la lógica en js/main.js
+  =====================================================================
+  data-theme="dark" → el tema por defecto es OSCURO.
+  JavaScript cambia este atributo a "light" cuando el usuario pulsa el botón
+  de tema, y el CSS reacciona usando variables (ver css/styles.css).
+-->
+<html lang="es" data-theme="dark">
 <head>
+  <!-- Codificación para que se vean bien acentos y la ñ -->
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <title>HellMed Hub</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Grenze+Gotisch:wght@500;700;900&family=Spectral:ital,wght@0,400;0,600;1,400&family=JetBrains+Mono:wght@400;600&display=swap">
-  <link rel="stylesheet" href="style.css">
+  <!-- Hace que la página se adapte al ancho del celular (responsive) -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- Descripción que aparece en Google al buscar el juego (SEO básico) -->
+  <meta name="description" content="HELLMED: Pulse of the Damned. Juego de acción 2D en pixel art gótico hecho en Nayarit. Descarga el juego para PC y la app HellMed Hub.">
+  <!-- Color de la barra del navegador en celulares -->
+  <meta name="theme-color" content="#0b0708">
+  <title>HELLMED: Pulse of the Damned | Sitio oficial</title>
+
+  <!-- Favicon: icono de la pestaña.
+       AGREGAR AQUÍ TU ICONO: reemplaza el href por "assets/img/favicon.png" cuando lo tengas. -->
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>✚</text></svg>">
+
+  <!-- Tipografías de Google Fonts:
+       Cinzel  → títulos épicos/góticos
+       Oswald  → encabezados estilo militar/gamer (como COD)
+       Inter   → texto normal, muy legible -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=Inter:wght@400;500;600;700&family=Oswald:wght@500;600;700&display=swap" rel="stylesheet">
+
+  <!-- Hoja de estilos principal -->
+  <link rel="stylesheet" href="css/styles.css">
+
+  <!-- Script mínimo que aplica el tema guardado ANTES de pintar la página.
+       Así evitamos el "parpadeo" de ver el tema oscuro un instante y luego el claro.
+       try/catch: algunos navegadores (modo privado) bloquean localStorage. -->
+  <script>
+    try {
+      var savedTheme = localStorage.getItem('hellmed-theme');
+      if (savedTheme === 'light' || savedTheme === 'dark') {
+        document.documentElement.setAttribute('data-theme', savedTheme);
+      }
+    } catch (e) { /* Si falla, se queda el tema oscuro por defecto */ }
+  </script>
+
+  <!-- "defer" = el JS se ejecuta cuando el HTML ya terminó de cargar -->
+  <script src="js/main.js" defer></script>
 </head>
+
 <body>
-<header class="dlbar">
-  <div class="wrap">
-    <div class="brand">
-      <svg width="30" height="30" viewBox="0 0 30 30" aria-hidden="true"><rect x="11" y="2" width="8" height="26" fill="#ff2a3d"/><rect x="3" y="9" width="24" height="8" fill="#ff2a3d"/><path d="M5 13h5l2-4 3 8 2-4h8" fill="none" stroke="#0b0909" stroke-width="1.8"/></svg>
-      <b>HellMed <span>Hub</span></b>
-    </div>
-    <nav class="dl" aria-label="Descargas">
-      <button class="btn primary" data-dl="community" type="button">
-        <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12m0 0-5-5m5 5 5-5M4 20h16" stroke="currentColor" stroke-width="2.4" fill="none"/></svg>
-        <span class="t">App de la Comunidad<small>Perfil · Foro · Skins · DLCs</small></span>
-      </button>
-      <button class="btn" data-dl="game" type="button">
-        <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><rect x="6" y="2" width="12" height="20" rx="2" stroke="currentColor" stroke-width="2" fill="none"/><path d="M12 7v6m0 0-3-3m3 3 3-3" stroke="currentColor" stroke-width="2" fill="none"/></svg>
-        <span class="t">Videojuego móvil<small>Instalable · Android</small></span>
-      </button>
-    </nav>
-  </div>
-</header>
+  <!-- Enlace de accesibilidad: permite a usuarios de teclado saltar el menú -->
+  <a href="#contenido" class="skip-link">Saltar al contenido</a>
 
-<main>
-  <section class="hero">
-    <div class="wrap">
-      <div class="label">Ecosistema oficial · Hecho en Nayarit</div>
-      <h1>HELL<em>MED</em></h1>
-      <div class="sub">Pulse of the Damned</div>
-      <p>El Hermano Cruz dejó el sacerdocio para hacerse paramédico. Al salvar a su esposa abrió las puertas del inframundo, y ahora baja a rescatarla con la Cruz Consagrada en una mano y el botiquín en la otra. Aquí está el expediente de todo lo que encontrará abajo.</p>
-    </div>
-    <div class="ecg" aria-hidden="true">
-      <svg viewBox="0 0 1200 90" preserveAspectRatio="none"><path id="ecgpath" d=""/></svg>
-      <span class="bpm">♥ 72 BPM · PULSO ESTABLE</span>
-    </div>
-  </section>
+  <!-- =================================================================
+       1. NAVBAR (barra de navegación fija arriba)
+       ================================================================= -->
+  <header class="navbar" id="navbar">
+    <div class="navbar__container container">
 
-  <section class="db" id="base-de-datos">
-    <div class="wrap">
-      <div class="db-head">
-        <div>
-          <div class="label">Base de datos oficial · Versión inicial</div>
-          <h2 id="db-title">Expedientes del inframundo</h2>
-          <p id="db-sub">Enemigos de los tres primeros niveles: Catedral en Ruinas, Ciudad y Bosque de las Sombras.</p>
-        </div>
-        <div class="tabs" role="tablist" aria-label="Sección de la base de datos">
-          <button class="tab" role="tab" id="tab-enemigos" aria-selected="true" type="button">Enemigos</button>
-          <button class="tab" role="tab" id="tab-habilidades" aria-selected="false" type="button">Habilidades</button>
-        </div>
+      <!-- Logo en texto.
+           AGREGAR AQUÍ TU LOGO: reemplaza el contenido del <a> por
+           <img src="assets/img/logo-hellmed.png" alt="HELLMED" class="navbar__logo-img"> -->
+      <a href="#inicio" class="navbar__logo" aria-label="HELLMED, ir al inicio">
+        <span class="navbar__logo-cross" aria-hidden="true">✚</span>
+        HELL<span>MED</span>
+      </a>
+
+      <!-- Menú de enlaces. En celular se convierte en menú desplegable -->
+      <nav class="navbar__menu" id="navMenu" aria-label="Navegación principal">
+        <ul class="navbar__links">
+          <li><a href="#historia" class="navbar__link">Historia</a></li>
+          <li><a href="#personajes" class="navbar__link">Personajes</a></li>
+          <li><a href="#requisitos" class="navbar__link">Requisitos</a></li>
+          <li><a href="#descargar" class="navbar__link">Descargar</a></li>
+        </ul>
+      </nav>
+
+      <!-- Acciones de la derecha: tema, login y botón hamburguesa -->
+      <div class="navbar__actions">
+        <!-- Botón de Dark/Light mode. El icono lo cambia JavaScript -->
+        <button class="btn-icon" id="themeToggle" type="button" aria-label="Cambiar a modo claro" title="Cambiar tema">
+          <span class="theme-icon" aria-hidden="true">☀</span>
+        </button>
+
+        <!-- Abre el modal de autenticación -->
+        <!-- En celular se muestra el texto corto "Entrar" para que quepa todo en la barra -->
+        <button class="btn btn--outline btn--sm" id="openAuth" type="button">
+          <span class="label-long">Iniciar sesión</span><span class="label-short">Entrar</span>
+        </button>
+
+        <!-- Botón hamburguesa (solo visible en pantallas pequeñas) -->
+        <button class="navbar__burger" id="burger" type="button" aria-label="Abrir menú" aria-expanded="false" aria-controls="navMenu">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main id="contenido">
+
+    <!-- =================================================================
+         2. HERO (pantalla principal, lo primero que ve el jugador)
+         ================================================================= -->
+    <section class="hero" id="inicio" aria-labelledby="heroTitle">
+
+      <!-- Capa de fondo: video + respaldo animado + brasas + oscurecido -->
+      <div class="hero__media" aria-hidden="true">
+        <!--
+          VIDEO DE FONDO (placeholder)
+          ------------------------------------------------------------
+          Cuando tengas tu tráiler:
+            1. Guárdalo en assets/video/trailer.mp4 (ideal: 1920x1080, menos de 10 MB, sin audio).
+            2. Descomenta la etiqueta <source> de abajo.
+            3. (Opcional) pon una captura en assets/img/hero-poster.jpg y agrega
+               poster="assets/img/hero-poster.jpg" al <video> para que se vea algo mientras carga.
+          Mientras no haya video, se ve el fondo animado hecho solo con CSS (.hero__fallback).
+          "muted" es OBLIGATORIO para que el navegador permita el autoplay.
+        -->
+        <video class="hero__video" autoplay muted loop playsinline preload="none">
+          <!-- <source src="assets/video/trailer.mp4" type="video/mp4"> -->
+        </video>
+
+        <!-- Fondo de respaldo con degradados (CSS puro). Si pones una imagen HD:
+             en styles.css busca ".hero__fallback" y descomenta la línea background-image. -->
+        <div class="hero__fallback"></div>
+
+        <!-- Contenedor de "brasas" flotantes. JavaScript lo llena con partículas -->
+        <div class="hero__embers" id="embers"></div>
+
+        <!-- Degradado oscuro para que el texto siempre se lea bien -->
+        <div class="hero__overlay"></div>
       </div>
 
-      <div class="tools">
-        <input id="q" type="search" placeholder="Buscar por nombre o descripción…" aria-label="Buscar">
-        <select id="sort" aria-label="Ordenar">
-          <option value="default">Orden del documento</option>
-          <option value="a">Mayor valor principal</option>
-          <option value="b">Mayor valor secundario</option>
-          <option value="name">Nombre (A–Z)</option>
-        </select>
-        <span class="note">Valores de balance preliminares · sujetos a playtesting</span>
+      <!-- Contenido visible del hero -->
+      <div class="hero__content container">
+        <p class="hero__eyebrow">Hecho en Nayarit · Acción 2D · Pixel art gótico</p>
+
+        <h1 class="hero__title" id="heroTitle">
+          HELLMED
+          <span class="hero__subtitle">Pulse of the Damned</span>
+        </h1>
+
+        <!-- Línea de electrocardiograma animada: hace referencia al "Pulse" del título.
+             Es un SVG: el CSS anima el trazo para que parezca que el pulso avanza. -->
+        <svg class="hero__pulse" viewBox="0 0 600 60" preserveAspectRatio="none" aria-hidden="true">
+          <polyline points="0,30 180,30 205,30 220,8 240,52 258,18 272,30 330,30 345,30 358,14 374,46 388,30 600,30" />
+        </svg>
+
+        <p class="hero__desc">
+          Un exsacerdote convertido en paramédico rompe el equilibrio cósmico al salvar a su esposa.
+          Ahora los demonios se la han llevado. Combate con fe, cúrate con medicina y desciende al inframundo.
+        </p>
+
+        <!-- Botones de acción principal (CTA = Call To Action) -->
+        <div class="hero__cta">
+          <!-- AGREGAR AQUÍ EL LINK DE DESCARGA DE TU JUEGO (página de Steam).
+               Reemplaza href="#" por el enlace real y BORRA el atributo data-placeholder-link -->
+          <a href="#" class="btn btn--primary btn--lg" data-placeholder-link>
+            <span aria-hidden="true">⬇</span> Descargar juego · PC
+          </a>
+
+          <!-- AGREGAR AQUÍ EL LINK DE DESCARGA DE TU APP MÓVIL (Google Play de HellMed Hub).
+               Reemplaza href="#" por el enlace real y BORRA el atributo data-placeholder-link -->
+          <a href="#" class="btn btn--ghost btn--lg" data-placeholder-link>
+            <span aria-hidden="true">📱</span> App móvil · HellMed Hub
+          </a>
+        </div>
+
+        <!-- Datos rápidos del producto -->
+        <ul class="hero__meta" aria-label="Datos del juego">
+          <li>PC · Windows</li>
+          <li>Clasificación +12</li>
+          <li>Precio regional ~149 MXN</li>
+        </ul>
       </div>
 
-      <div class="grid" id="grid" aria-live="polite"></div>
+      <!-- Indicador para bajar a la siguiente sección -->
+      <a href="#historia" class="hero__scroll" aria-label="Bajar a la historia"><span></span></a>
+    </section>
+
+    <!-- =================================================================
+         3. HISTORIA + CARACTERÍSTICAS
+         ================================================================= -->
+    <section class="section" id="historia" aria-labelledby="historiaTitle">
+      <div class="container">
+        <!-- Encabezado reutilizable de sección -->
+        <header class="section__header reveal">
+          <p class="section__eyebrow">La historia</p>
+          <h2 class="section__title" id="historiaTitle">Fe y medicina contra el infierno</h2>
+          <p class="section__lead">
+            Tras una visión en la que ve morir a su esposa, el Hermano Cruz deja el sacerdocio para hacerse paramédico.
+            Cuando por fin logra salvarla, las puertas del inframundo se abren. Con su cruz en una mano y su botiquín en la otra,
+            y guiado por el espíritu de un médico caído, emprende el rescate.
+          </p>
+        </header>
+
+        <!-- Rejilla de 4 características (los diferenciadores del modelo de negocio) -->
+        <div class="features">
+          <article class="feature reveal">
+            <span class="feature__icon" aria-hidden="true">✚</span>
+            <h3 class="feature__title">Un héroe que salva vidas</h3>
+            <p class="feature__text">Combates con la Cruz Consagrada y te curas con un botiquín de primeros auxilios. La medicina es parte de la jugabilidad.</p>
+          </article>
+          <article class="feature reveal">
+            <span class="feature__icon" aria-hidden="true">👻</span>
+            <h3 class="feature__title">Phantom, tu guía</h3>
+            <p class="feature__text">Te advierte de trampas, ataca a tu lado y te revive una vez por nivel. Accesible para nuevos, retador para veteranos.</p>
+          </article>
+          <article class="feature reveal">
+            <span class="feature__icon" aria-hidden="true">📱</span>
+            <h3 class="feature__title">Ecosistema PC + móvil</h3>
+            <p class="feature__text">Con HellMed Hub revisas tu progreso, personalizas skins, compras DLCs y hablas con la comunidad desde el celular.</p>
+          </article>
+          <article class="feature reveal">
+            <span class="feature__icon" aria-hidden="true">💻</span>
+            <h3 class="feature__title">Corre en tu PC</h3>
+            <p class="feature__text">Funciona con 8 GB de RAM y gráficos integrados. Precio regional en pesos y hecho en español desde el inicio.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- =================================================================
+         4. CATÁLOGO DE PERSONAJES Y ENEMIGOS
+         Las tarjetas NO están escritas aquí: JavaScript las genera a partir
+         del arreglo CHARACTERS (js/main.js). Así, para agregar un personaje
+         solo editas los datos, no el HTML.
+         ================================================================= -->
+    <section class="section section--alt" id="personajes" aria-labelledby="personajesTitle">
+      <div class="container">
+        <header class="section__header reveal">
+          <p class="section__eyebrow">Facciones</p>
+          <h2 class="section__title" id="personajesTitle">Conoce a los condenados</h2>
+          <p class="section__lead">Selecciona una facción y luego un personaje para ver su historia, estadísticas y habilidades.</p>
+        </header>
+
+        <!-- Pestañas (tabs) para cambiar entre Héroes y Enemigos -->
+        <div class="tabs reveal" role="tablist" aria-label="Facciones">
+          <button class="tab is-active" type="button" role="tab" id="tab-heroes"
+                  aria-selected="true" aria-controls="roster" data-faction="heroes">
+            ✚ Héroes
+          </button>
+          <button class="tab" type="button" role="tab" id="tab-enemigos"
+                  aria-selected="false" aria-controls="roster" data-faction="enemigos" tabindex="-1">
+            ☠ Enemigos
+          </button>
+        </div>
+
+        <!-- Panel principal: lista de tarjetas + ficha de detalle -->
+        <div class="roster reveal" id="roster" role="tabpanel" aria-labelledby="tab-heroes">
+          <!-- Aquí JS inserta los botones/tarjetas de cada personaje -->
+          <div class="roster__list" id="rosterList"></div>
+
+          <!-- Aquí JS dibuja la ficha del personaje seleccionado.
+               aria-live="polite" hace que los lectores de pantalla anuncien el cambio -->
+          <article class="roster__detail" id="rosterDetail" aria-live="polite"></article>
+        </div>
+      </div>
+    </section>
+
+    <!-- =================================================================
+         5. REQUISITOS DEL SISTEMA
+         ================================================================= -->
+    <section class="section" id="requisitos" aria-labelledby="requisitosTitle">
+      <div class="container">
+        <header class="section__header reveal">
+          <p class="section__eyebrow">Especificaciones</p>
+          <h2 class="section__title" id="requisitosTitle">Requisitos del sistema</h2>
+          <p class="section__lead">Diseñado para computadoras escolares y de oficina. Si tu PC abre un navegador con varias pestañas, probablemente corre HELLMED.</p>
+        </header>
+
+        <!--
+          NOTA PARA EL EQUIPO: los valores son una ESTIMACIÓN basada en un juego 2D de Unity
+          con 8 GB de RAM y gráficos integrados (como dice el modelo de negocio).
+          Confírmenlos probando la build final en varias PCs y actualicen esta tabla.
+          Se usa <dl> (lista de definiciones): <dt> = nombre del dato, <dd> = valor.
+        -->
+        <div class="specs">
+          <article class="spec-card reveal">
+            <header class="spec-card__header">
+              <h3 class="spec-card__title">Mínimos</h3>
+              <span class="spec-card__badge">Gama básica</span>
+            </header>
+            <dl class="spec-list">
+              <div class="spec-list__row"><dt>Sistema operativo</dt><dd>Windows 10 (64 bits)</dd></div>
+              <div class="spec-list__row"><dt>Procesador</dt><dd>Intel Core i3 (6.ª gen) / AMD Ryzen 3</dd></div>
+              <div class="spec-list__row"><dt>Memoria RAM</dt><dd>8 GB</dd></div>
+              <div class="spec-list__row"><dt>Gráficos</dt><dd>Integrados: Intel UHD 620 / AMD Radeon Vega 3</dd></div>
+              <div class="spec-list__row"><dt>DirectX</dt><dd>Versión 11</dd></div>
+              <div class="spec-list__row"><dt>Almacenamiento</dt><dd>2 GB disponibles</dd></div>
+            </dl>
+          </article>
+
+          <article class="spec-card spec-card--featured reveal">
+            <header class="spec-card__header">
+              <h3 class="spec-card__title">Recomendados</h3>
+              <span class="spec-card__badge">60 FPS estables</span>
+            </header>
+            <dl class="spec-list">
+              <div class="spec-list__row"><dt>Sistema operativo</dt><dd>Windows 10 / 11 (64 bits)</dd></div>
+              <div class="spec-list__row"><dt>Procesador</dt><dd>Intel Core i5 (8.ª gen) / AMD Ryzen 5</dd></div>
+              <div class="spec-list__row"><dt>Memoria RAM</dt><dd>8 GB o más</dd></div>
+              <div class="spec-list__row"><dt>Gráficos</dt><dd>Intel Iris Xe / NVIDIA GTX 750 Ti o superior</dd></div>
+              <div class="spec-list__row"><dt>DirectX</dt><dd>Versión 11</dd></div>
+              <div class="spec-list__row"><dt>Almacenamiento</dt><dd>2 GB en SSD</dd></div>
+            </dl>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- =================================================================
+         6. DESCARGAS (juego para PC + app móvil)
+         ================================================================= -->
+    <section class="section section--alt" id="descargar" aria-labelledby="descargarTitle">
+      <div class="container">
+        <header class="section__header reveal">
+          <p class="section__eyebrow">Únete</p>
+          <h2 class="section__title" id="descargarTitle">Elige tu campo de batalla</h2>
+        </header>
+
+        <div class="downloads">
+          <!-- Tarjeta del juego de PC -->
+          <article class="download-card reveal">
+            <span class="download-card__tag">Videojuego · PC</span>
+            <h3 class="download-card__title">HELLMED: Pulse of the Damned</h3>
+            <p class="download-card__text">
+              Tres niveles iniciales: Catedral en Ruinas, Ciudad y Bosque de las Sombras.
+              Prueba gratis el nivel tutorial antes de comprar.
+            </p>
+            <p class="download-card__price">~149 MXN <small>precio regional</small></p>
+            <div class="download-card__actions">
+              <!-- AGREGAR AQUÍ EL LINK DE DESCARGA DE TU JUEGO (página de Steam).
+                   Borra data-placeholder-link cuando pongas el enlace real -->
+              <a href="#" class="btn btn--primary" data-placeholder-link>Comprar en Steam</a>
+
+              <!-- AGREGAR AQUÍ EL LINK DE LA DEMO GRATUITA (página de itch.io) -->
+              <a href="#" class="btn btn--outline" data-placeholder-link>Demo gratis en itch.io</a>
+            </div>
+            <!-- Las consolas están planeadas "a futuro" en el modelo de negocio.
+                 Cuando exista esa versión, agrega aquí otro botón. -->
+            <p class="download-card__note">Versión para consolas: próximamente.</p>
+          </article>
+
+          <!-- Tarjeta de la app móvil -->
+          <article class="download-card download-card--app reveal">
+            <span class="download-card__tag">App móvil · Foro</span>
+            <h3 class="download-card__title">HellMed Hub</h3>
+            <p class="download-card__text">
+              Reanuda tu misión, personaliza skins (Cura Clásico y Paramédico), consulta tus estadísticas
+              y logros, compra nuevos mapas y participa en el foro de la comunidad.
+            </p>
+            <p class="download-card__price">Gratis <small>con compras opcionales</small></p>
+            <div class="download-card__actions">
+              <!-- AGREGAR AQUÍ EL LINK DE DESCARGA DE TU APP MÓVIL (Google Play).
+                   Borra data-placeholder-link cuando pongas el enlace real -->
+              <a href="#" class="btn btn--accent" data-placeholder-link>Disponible en Google Play</a>
+
+              <!-- AGREGAR AQUÍ EL LINK DE TU SERVIDOR DE DISCORD -->
+              <a href="#" class="btn btn--outline" data-placeholder-link>Únete al Discord</a>
+            </div>
+            <p class="download-card__note">iOS: por confirmar.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- =================================================================
+       7. FOOTER (pie de página)
+       ================================================================= -->
+  <footer class="footer">
+    <div class="container footer__inner">
+      <div class="footer__brand">
+        <p class="navbar__logo">HELL<span>MED</span></p>
+        <p class="footer__text">Proyecto desarrollado por estudiantes de Ingeniería en Desarrollo y Gestión de Software, Universidad Tecnológica de Nayarit.</p>
+      </div>
+
+      <!-- AGREGAR AQUÍ LOS LINKS DE TUS REDES SOCIALES (TikTok, Instagram, YouTube) -->
+      <ul class="footer__social" aria-label="Redes sociales">
+        <li><a href="#" data-placeholder-link>TikTok</a></li>
+        <li><a href="#" data-placeholder-link>Instagram</a></li>
+        <li><a href="#" data-placeholder-link>YouTube</a></li>
+        <li><a href="#" data-placeholder-link>Discord</a></li>
+      </ul>
     </div>
-  </section>
-</main>
+    <!-- El año lo coloca JavaScript automáticamente -->
+    <p class="footer__copy">© <span id="year"></span> Equipo HELLMED · Tepic, Nayarit. Todos los derechos reservados.</p>
+  </footer>
 
-<footer>
-  <div class="wrap">
-    <span>HELLMED: Pulse of the Damned · Universidad Tecnológica de Nayarit · IDGS</span>
-    <span>Unity · C# · Pixel art</span>
-  </div>
-</footer>
+  <!-- =================================================================
+       8. MODAL DE AUTENTICACIÓN (Login / Registro)
+       - Está oculto hasta que JS le agrega la clase "is-open".
+       - role="dialog" y aria-modal le dicen al lector de pantalla que es una ventana emergente.
+       - novalidate en los <form>: desactivamos los globos de error del navegador
+         para mostrar NUESTROS mensajes personalizados (validación en JS).
+       ================================================================= -->
+  <div class="modal" id="authModal" role="dialog" aria-modal="true" aria-labelledby="authTitle" aria-hidden="true">
+    <!-- Fondo oscuro: al hacer clic, se cierra el modal -->
+    <div class="modal__overlay" data-close-modal></div>
 
-<div class="overlay" id="overlay" hidden>
-  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="m-title">
-    <div class="label" id="m-kind">Descarga</div>
-    <h3 id="m-title"></h3>
-    <p id="m-text"></p>
-    <dl id="m-dl"></dl>
-    <button class="btn primary" id="m-close" type="button">Entendido</button>
+    <div class="modal__box">
+      <button class="modal__close" type="button" data-close-modal aria-label="Cerrar ventana">✕</button>
+
+      <h2 class="modal__title" id="authTitle">Únete a la resistencia</h2>
+      <p class="modal__note">El registro es <strong>opcional</strong>. Con una cuenta podrás sincronizar tu progreso con HellMed Hub (próximamente).</p>
+
+      <!-- Pestañas para cambiar entre formularios -->
+      <div class="auth-tabs" role="tablist" aria-label="Tipo de acceso">
+        <button class="auth-tab is-active" type="button" role="tab" aria-selected="true" data-auth-tab="login">Iniciar sesión</button>
+        <button class="auth-tab" type="button" role="tab" aria-selected="false" data-auth-tab="register">Registrarse</button>
+      </div>
+
+      <!-- ---------- FORMULARIO: INICIAR SESIÓN ---------- -->
+      <form class="auth-form" id="loginForm" data-auth-panel="login" novalidate>
+        <!-- Cada .field = etiqueta + campo + mensaje de error.
+             data-rules indica qué validaciones aplica JS (separadas por "|") -->
+        <div class="field">
+          <label class="field__label" for="loginEmail">Correo electrónico</label>
+          <input class="field__input" type="email" id="loginEmail" name="email"
+                 placeholder="tu@correo.com" autocomplete="email"
+                 required data-rules="required|email" aria-describedby="loginEmail-error">
+          <p class="field__error" id="loginEmail-error"></p>
+        </div>
+
+        <div class="field">
+          <label class="field__label" for="loginPassword">Contraseña</label>
+          <div class="field__password">
+            <input class="field__input" type="password" id="loginPassword" name="password"
+                   placeholder="••••••••" autocomplete="current-password"
+                   required data-rules="required" aria-describedby="loginPassword-error">
+            <!-- Botón para mostrar/ocultar contraseña -->
+            <button class="field__toggle" type="button" data-toggle-password="loginPassword" aria-label="Mostrar contraseña">👁</button>
+          </div>
+          <p class="field__error" id="loginPassword-error"></p>
+        </div>
+
+        <label class="checkbox">
+          <input type="checkbox" name="remember"> Recordarme
+        </label>
+
+        <button class="btn btn--primary btn--block" type="submit">Entrar</button>
+      </form>
+
+      <!-- ---------- FORMULARIO: REGISTRO ---------- -->
+      <form class="auth-form" id="registerForm" data-auth-panel="register" novalidate hidden>
+        <div class="field">
+          <label class="field__label" for="regUser">Nombre de jugador</label>
+          <input class="field__input" type="text" id="regUser" name="username"
+                 placeholder="toñazo09" autocomplete="username"
+                 required data-rules="required|username" aria-describedby="regUser-error">
+          <p class="field__error" id="regUser-error"></p>
+        </div>
+
+        <div class="field">
+          <label class="field__label" for="regEmail">Correo electrónico</label>
+          <input class="field__input" type="email" id="regEmail" name="email"
+                 placeholder="tu@correo.com" autocomplete="email"
+                 required data-rules="required|email" aria-describedby="regEmail-error">
+          <p class="field__error" id="regEmail-error"></p>
+        </div>
+
+        <div class="field">
+          <label class="field__label" for="regPassword">Contraseña</label>
+          <div class="field__password">
+            <input class="field__input" type="password" id="regPassword" name="password"
+                   placeholder="Mínimo 8 caracteres" autocomplete="new-password"
+                   required data-rules="required|password" aria-describedby="regPassword-error">
+            <button class="field__toggle" type="button" data-toggle-password="regPassword" aria-label="Mostrar contraseña">👁</button>
+          </div>
+          <!-- Barra de fuerza de contraseña (la actualiza JS mientras escribes) -->
+          <div class="strength" aria-hidden="true"><span class="strength__bar" id="strengthBar"></span></div>
+          <p class="field__error" id="regPassword-error"></p>
+        </div>
+
+        <div class="field">
+          <label class="field__label" for="regConfirm">Confirmar contraseña</label>
+          <input class="field__input" type="password" id="regConfirm" name="confirm"
+                 placeholder="Repite tu contraseña" autocomplete="new-password"
+                 required data-rules="required|match:regPassword" aria-describedby="regConfirm-error">
+          <p class="field__error" id="regConfirm-error"></p>
+        </div>
+
+        <div class="field">
+          <label class="checkbox">
+            <input type="checkbox" id="regTerms" name="terms" data-rules="checked" aria-describedby="regTerms-error">
+            Acepto los términos y el aviso de privacidad
+            <!-- AGREGAR AQUÍ EL LINK A TU AVISO DE PRIVACIDAD cuando exista -->
+          </label>
+          <p class="field__error" id="regTerms-error"></p>
+        </div>
+
+        <button class="btn btn--primary btn--block" type="submit">Crear cuenta</button>
+      </form>
+    </div>
   </div>
-</div>
-<script src="app.js"></script>
+
+  <!-- Notificación flotante (toast). JS cambia su texto y la muestra unos segundos -->
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
 </body>
 </html>
