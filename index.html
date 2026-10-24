@@ -50,6 +50,8 @@
   </script>
 
   <!-- "defer" = el JS se ejecuta cuando el HTML ya terminó de cargar -->
+  <!-- Supabase (autenticación y base de datos). Debe ir ANTES de app.js -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js" defer></script>
   <script src="app.js" defer></script>
 </head>
 

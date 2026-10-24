@@ -23,6 +23,25 @@
   'use strict';
 
   /* ===================================================================
+     SUPABASE — conexión (la publishable key es pública, es seguro)
+     =================================================================== */
+  const SUPABASE_URL = 'https://hmqhchbkbylqywwcxkfn.supabase.co';
+  const SUPABASE_KEY = 'sb_publishable_wmMhnh0HGSdkZxexdQsM5g_DXMu1fq5';
+  const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+  // Traduce los errores de Supabase a mensajes claros en español
+  function authErrorMessage(error) {
+    const msg = (error && error.message ? error.message : '').toLowerCase();
+    if (msg.includes('invalid login')) return 'Correo o contraseña incorrectos.';
+    if (msg.includes('already registered') || msg.includes('already been registered'))
+      return 'Ese correo ya está registrado.';
+    if (msg.includes('email not confirmed')) return 'Confirma tu correo antes de entrar.';
+    if (msg.includes('rate limit')) return 'Demasiados intentos. Espera un momento.';
+    if (msg.includes('database error')) return 'Ese nombre de jugador ya existe. Elige otro.';
+    return 'Ocurrió un error. Intenta de nuevo.';
+  }
+
+  /* ===================================================================
      0. DATOS DE PERSONAJES
      -------------------------------------------------------------------
      Para AGREGAR un personaje: copia un objeto y cambia sus valores.
@@ -470,7 +489,9 @@
   function initModal() {
     modal.el = $('#authModal');
 
-    $('#openAuth').addEventListener('click', () => openModal('login'));
+    $('#openAuth').addEventListener('click', () => {
+      if (!currentUser) openModal('login'); // con sesión iniciada, el botón sirve para salir
+    });
 
     // Cualquier elemento con data-close-modal (fondo y botón ✕) cierra el modal
     $$('[data-close-modal]', modal.el).forEach((el) => el.addEventListener('click', closeModal));
@@ -627,23 +648,24 @@
       // FormData lee todos los campos del formulario por su atributo name
       const data = Object.fromEntries(new FormData(loginForm));
 
-      /* AGREGAR AQUÍ LA LLAMADA REAL A TU BACKEND, por ejemplo:
-         const res = await fetch('https://api.hellmed.mx/auth/login', {
-           method: 'POST',
-           headers: { 'Content-Type': 'application/json' },
-           body: JSON.stringify({ email: data.email, password: data.password })
-         });
-         if (!res.ok) { mostrar error; return; }
-      */
-      await fakeRequest();
+      const { error } = await db.auth.signInWithPassword({
+        email: data.email.trim(),
+        password: data.password,
+      });
 
       button.classList.remove('is-loading');
       button.textContent = 'Entrar';
+
+      if (error) {
+        showToast(authErrorMessage(error));
+        return;
+      }
+
       loginForm.reset();
       $$('.field__input', loginForm).forEach((i) => i.classList.remove('is-valid'));
       closeModal();
-      // Solo mostramos la parte antes de @ como saludo (demo, nada se guarda)
-      showToast(`Bienvenido de vuelta, ${data.email.split('@')[0]}. (Demo: aún no hay servidor)`);
+      // El saludo y el botón "Salir" los actualiza onAuthStateChange
+      showToast('¡Bienvenido de vuelta!');
     });
 
     // --- Envío del REGISTRO ---
@@ -656,18 +678,81 @@
       button.textContent = 'Creando cuenta...';
 
       const data = Object.fromEntries(new FormData(registerForm));
-      // ⚠ NUNCA guardes contraseñas en localStorage. Se envían al backend por HTTPS
-      // y el servidor las guarda con hash (bcrypt / argon2).
-      /* AGREGAR AQUÍ: fetch('https://api.hellmed.mx/auth/register', { ... }) */
-      await fakeRequest();
+      const username = data.username.trim();
+
+      // Revisar que el nombre de jugador no exista (profiles es de lectura pública)
+      const { data: taken } = await db
+        .from('profiles')
+        .select('id')
+        .eq('username', username)
+        .maybeSingle();
+
+      if (taken) {
+        button.classList.remove('is-loading');
+        button.textContent = 'Crear cuenta';
+        showToast('Ese nombre de jugador ya existe. Elige otro.');
+        return;
+      }
+
+      // El username viaja en "data": el trigger lo copia a la tabla profiles
+      const { data: result, error } = await db.auth.signUp({
+        email: data.email.trim(),
+        password: data.password,
+        options: { data: { username } },
+      });
 
       button.classList.remove('is-loading');
       button.textContent = 'Crear cuenta';
+
+      if (error) {
+        showToast(authErrorMessage(error));
+        return;
+      }
+
       registerForm.reset();
       updateStrength('');
       $$('.field__input', registerForm).forEach((i) => i.classList.remove('is-valid'));
       closeModal();
-      showToast(`¡Cuenta creada, ${data.username}! (Demo: aún no hay servidor)`);
+
+      if (result.session) {
+        showToast(`¡Cuenta creada, ${username}!`);
+      } else {
+        // Pasa cuando "Confirm email" está activado en Supabase
+        showToast('Cuenta creada. Revisa tu correo para confirmarla.', 6000);
+      }
+    });
+  }
+
+  /* ===================================================================
+     8b. SESIÓN — botón "Iniciar sesión" / "Salir"
+     -------------------------------------------------------------------
+     Supabase guarda la sesión en el navegador. Cada vez que cambia
+     (login, logout, recargar la página) se ejecuta onAuthStateChange.
+     =================================================================== */
+  let currentUser = null;
+
+  function renderSessionButton() {
+    const btn = $('#openAuth');
+    if (currentUser) {
+      const name = currentUser.user_metadata?.username || currentUser.email.split('@')[0];
+      btn.innerHTML = '<span class="label-long"></span><span class="label-short">Salir</span>';
+      $('.label-long', btn).textContent = `Salir (${name})`;
+    } else {
+      btn.innerHTML = '<span class="label-long">Iniciar sesión</span><span class="label-short">Entrar</span>';
+    }
+  }
+
+  function initSession() {
+    // Con sesión iniciada, el mismo botón cierra la sesión
+    $('#openAuth').addEventListener('click', async () => {
+      if (!currentUser) return;
+      await db.auth.signOut();
+      showToast('Sesión cerrada.');
+    });
+
+    db.auth.onAuthStateChange((_event, session) => {
+      currentUser = session ? session.user : null;
+      renderSessionButton();
     });
   }
 
@@ -701,6 +786,7 @@
     initReveal();
     initModal();
     initForms();
+    initSession();
     initPlaceholders();
   }
 
