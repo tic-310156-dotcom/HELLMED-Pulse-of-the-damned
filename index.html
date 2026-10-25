@@ -20,11 +20,16 @@
   <meta name="description" content="HELLMED: Pulse of the Damned. Juego de acción 2D en pixel art gótico hecho en Nayarit. Descarga el juego para PC y la app HellMed Hub.">
   <!-- Color de la barra del navegador en celulares -->
   <meta name="theme-color" content="#0b0708">
+  <!-- PWA: manifiesto + iconos (permiten instalar el sitio como app) -->
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="HELLMED">
   <title>HELLMED: Pulse of the Damned | Sitio oficial</title>
 
-  <!-- Favicon: icono de la pestaña.
-       AGREGAR AQUÍ TU ICONO: reemplaza el href por "assets/img/favicon.png" cuando lo tengas. -->
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>✚</text></svg>">
+  <!-- Favicon: icono de la pestaña -->
+  <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
 
   <!-- Tipografías de Google Fonts:
        Cinzel  → títulos épicos/góticos
@@ -36,6 +41,8 @@
 
   <!-- Hoja de estilos principal -->
   <link rel="stylesheet" href="style.css">
+  <!-- Estilos de las secciones agregadas (Cómo jugar, Escenarios, Equipo) -->
+  <link rel="stylesheet" href="extras.css">
 
   <!-- Script mínimo que aplica el tema guardado ANTES de pintar la página.
        Así evitamos el "parpadeo" de ver el tema oscuro un instante y luego el claro.
@@ -78,7 +85,10 @@
         <ul class="navbar__links">
           <li><a href="#historia" class="navbar__link">Historia</a></li>
           <li><a href="#personajes" class="navbar__link">Personajes</a></li>
+          <li><a href="#jugar" class="navbar__link">Jugar</a></li>
+          <li><a href="#escenarios" class="navbar__link">Escenarios</a></li>
           <li><a href="#requisitos" class="navbar__link">Requisitos</a></li>
+          <li><a href="#equipo" class="navbar__link">Equipo</a></li>
           <li><a href="#descargar" class="navbar__link">Descargar</a></li>
         </ul>
       </nav>
@@ -176,6 +186,7 @@
 
         <!-- Datos rápidos del producto -->
         <ul class="hero__meta" aria-label="Datos del juego">
+          <li>Género: acción 2D</li>
           <li>PC · Windows</li>
           <li>Clasificación +12</li>
           <li>Precio regional ~$000 MXN</li>
@@ -199,6 +210,10 @@
             Tras una visión en la que ve morir a su esposa, el Hermano Cruz deja el sacerdocio para hacerse paramédico.
             Cuando por fin logra salvarla, las puertas del inframundo se abren. Con su cruz en una mano y su botiquín en la otra,
             y guiado por el espíritu de un médico caído, emprende el rescate.
+          </p>
+          <p class="section__lead section__lead--goal">
+            <strong>Objetivo:</strong> atraviesa los tres niveles iniciales, derrota al jefe de cada uno y llega hasta tu esposa
+            antes de que el inframundo se la lleve para siempre.
           </p>
         </header>
 
@@ -267,6 +282,125 @@
     </section>
 
     <!-- =================================================================
+         4B. CÓMO JUGAR (objetivo, forma de jugar y controles)
+         NOTA PARA EL EQUIPO: los controles son una PROPUESTA. Confírmenlos
+         con la build real del juego y ajusten las teclas si son distintas.
+         ================================================================= -->
+    <section class="section" id="jugar" aria-labelledby="jugarTitle">
+      <div class="container">
+        <header class="section__header reveal">
+          <p class="section__eyebrow">Cómo jugar</p>
+          <h2 class="section__title" id="jugarTitle">Explora, combate y cura</h2>
+          <p class="section__lead">Aprende lo básico en un minuto: cuatro ideas y los controles para PC.</p>
+        </header>
+
+        <div class="features">
+          <article class="feature reveal">
+            <span class="feature__icon" aria-hidden="true">🧭</span>
+            <h3 class="feature__title">1. Explora y avanza</h3>
+            <p class="feature__text">Recorre cada nivel de izquierda a derecha, esquiva trampas y busca el camino hacia el jefe del escenario.</p>
+          </article>
+          <article class="feature reveal">
+            <span class="feature__icon" aria-hidden="true">✝</span>
+            <h3 class="feature__title">2. Combate con la Cruz</h3>
+            <p class="feature__text">Ataca con la Cruz Consagrada, usa el Cántico Sagrado y la Lanza de Luz. Esquiva y contraataca.</p>
+          </article>
+          <article class="feature reveal">
+            <span class="feature__icon" aria-hidden="true">✚</span>
+            <h3 class="feature__title">3. Cúrate a tiempo</h3>
+            <p class="feature__text">Usa tu botiquín de primeros auxilios para recuperar vida. La medicina es parte de la jugabilidad.</p>
+          </article>
+          <article class="feature reveal">
+            <span class="feature__icon" aria-hidden="true">👻</span>
+            <h3 class="feature__title">4. Confía en Phantom</h3>
+            <p class="feature__text">Te avisa de los peligros, te da pistas y te revive una vez por nivel. Úsalo bien.</p>
+          </article>
+        </div>
+
+        <div class="specs specs--controls">
+          <article class="spec-card spec-card--featured reveal">
+            <header class="spec-card__header">
+              <h3 class="spec-card__title">Teclado</h3>
+              <span class="spec-card__badge">PC · principal</span>
+            </header>
+            <dl class="spec-list">
+              <div class="spec-list__row"><dt>Moverse</dt><dd><kbd>A</kbd> <kbd>D</kbd> o <kbd>←</kbd> <kbd>→</kbd></dd></div>
+              <div class="spec-list__row"><dt>Saltar / doble salto</dt><dd><kbd>Espacio</kbd> (púlsalo dos veces)</dd></div>
+              <div class="spec-list__row"><dt>Cruz Consagrada (atacar)</dt><dd><kbd>J</kbd></dd></div>
+              <div class="spec-list__row"><dt>Botiquín (curarte)</dt><dd><kbd>K</kbd></dd></div>
+              <div class="spec-list__row"><dt>Cántico Sagrado</dt><dd><kbd>L</kbd></dd></div>
+              <div class="spec-list__row"><dt>Lanza de Luz</dt><dd><kbd>U</kbd></dd></div>
+              <div class="spec-list__row"><dt>Pausa</dt><dd><kbd>Esc</kbd></dd></div>
+            </dl>
+          </article>
+
+          <article class="spec-card reveal">
+            <header class="spec-card__header">
+              <h3 class="spec-card__title">Mando</h3>
+              <span class="spec-card__badge">Opcional</span>
+            </header>
+            <dl class="spec-list">
+              <div class="spec-list__row"><dt>Moverse</dt><dd>Stick izquierdo</dd></div>
+              <div class="spec-list__row"><dt>Saltar / doble salto</dt><dd>Botón <kbd>A</kbd></dd></div>
+              <div class="spec-list__row"><dt>Cruz Consagrada (atacar)</dt><dd>Botón <kbd>X</kbd></dd></div>
+              <div class="spec-list__row"><dt>Botiquín (curarte)</dt><dd>Botón <kbd>Y</kbd></dd></div>
+              <div class="spec-list__row"><dt>Cántico Sagrado</dt><dd>Botón <kbd>B</kbd></dd></div>
+              <div class="spec-list__row"><dt>Lanza de Luz</dt><dd><kbd>RT</kbd></dd></div>
+              <div class="spec-list__row"><dt>Pausa</dt><dd><kbd>Start</kbd></dd></div>
+            </dl>
+          </article>
+        </div>
+        <p class="controls-note">Los controles pueden cambiar durante el desarrollo. Aquí siempre verás los más recientes.</p>
+      </div>
+    </section>
+
+    <!-- =================================================================
+         4C. ESCENARIOS Y NIVELES (ilustraciones conceptuales)
+         Cuando tengan capturas reales de la build, cambien el src de cada
+         <img> por la ruta de la captura (ej. assets/img/captura-nivel1.png).
+         ================================================================= -->
+    <section class="section section--alt" id="escenarios" aria-labelledby="escenariosTitle">
+      <div class="container">
+        <header class="section__header reveal">
+          <p class="section__eyebrow">Escenarios y niveles</p>
+          <h2 class="section__title" id="escenariosTitle">Tres niveles para descender al infierno</h2>
+          <p class="section__lead">Cada nivel tiene su propio ambiente, sus enemigos y un jefe que te espera al final.</p>
+        </header>
+
+        <div class="gallery">
+          <figure class="shot reveal">
+            <img src="assets/img/escena-catedral.svg" width="800" height="450" loading="lazy"
+                 alt="Ilustración de la Catedral en Ruinas bajo una luna pálida, con una gárgola sobre la torre">
+            <figcaption>
+              <span class="shot__title">Nivel 1 · Catedral en Ruinas</span>
+              <span class="shot__text">Un templo profanado donde empieza el descenso. Aquí aprendes a esquivar y a contraatacar.</span>
+              <span class="shot__boss">Jefe: La Gárgola</span>
+            </figcaption>
+          </figure>
+          <figure class="shot reveal">
+            <img src="assets/img/escena-ciudad.svg" width="800" height="450" loading="lazy"
+                 alt="Ilustración de la Ciudad bajo un cielo rojo, con la Muerte y su guadaña en la calle">
+            <figcaption>
+              <span class="shot__title">Nivel 2 · Ciudad</span>
+              <span class="shot__text">Calles oscuras bajo un cielo sangriento. La Muerte recorre cada esquina buscando venganza.</span>
+              <span class="shot__boss">Jefe: La Muerte</span>
+            </figcaption>
+          </figure>
+          <figure class="shot reveal">
+            <img src="assets/img/escena-bosque.svg" width="800" height="450" loading="lazy"
+                 alt="Ilustración del Bosque de las Sombras con pinos oscuros, ojos rojos y la silueta del Minotauro">
+            <figcaption>
+              <span class="shot__title">Nivel 3 · Bosque de las Sombras</span>
+              <span class="shot__text">Niebla, pinos retorcidos y miradas rojas en la oscuridad. El doble salto será tu mejor aliado.</span>
+              <span class="shot__boss">Jefe: El Minotauro</span>
+            </figcaption>
+          </figure>
+        </div>
+        <p class="gallery__note">Ilustraciones conceptuales del juego. Las capturas de la versión final se agregarán aquí.</p>
+      </div>
+    </section>
+
+    <!-- =================================================================
          5. REQUISITOS DEL SISTEMA
          ================================================================= -->
     <section class="section" id="requisitos" aria-labelledby="requisitosTitle">
@@ -318,9 +452,57 @@
     </section>
 
     <!-- =================================================================
+         5B. EQUIPO (integrantes y participación)
+         AGREGAR AQUÍ: cambia "Integrante 2..5" por los nombres reales y
+         escribe el rol y la participación de cada uno.
+         ================================================================= -->
+    <section class="section section--alt" id="equipo" aria-labelledby="equipoTitle">
+      <div class="container">
+        <header class="section__header reveal">
+          <p class="section__eyebrow">Equipo HELLMED</p>
+          <h2 class="section__title" id="equipoTitle">Quiénes hacemos HELLMED</h2>
+          <p class="section__lead">Estudiantes de la UTNay, Tepic, Nayarit, trabajando juntos en el juego y su ecosistema.</p>
+        </header>
+
+        <div class="team">
+          <article class="team-card reveal">
+            <div class="team-card__avatar" aria-hidden="true">M</div>
+            <h3 class="team-card__name">Mauricio</h3>
+            <p class="team-card__role">Desarrollo web</p>
+            <p class="team-card__text">Sitio web oficial, inicio de sesión y registro con Supabase, y la implementación de la PWA.</p>
+          </article>
+          <article class="team-card reveal">
+            <div class="team-card__avatar" aria-hidden="true">2</div>
+            <h3 class="team-card__name">Integrante 2</h3>
+            <p class="team-card__role">Rol por definir</p>
+            <p class="team-card__text">Escribe aquí su participación en el proyecto.</p>
+          </article>
+          <article class="team-card reveal">
+            <div class="team-card__avatar" aria-hidden="true">3</div>
+            <h3 class="team-card__name">Integrante 3</h3>
+            <p class="team-card__role">Rol por definir</p>
+            <p class="team-card__text">Escribe aquí su participación en el proyecto.</p>
+          </article>
+          <article class="team-card reveal">
+            <div class="team-card__avatar" aria-hidden="true">4</div>
+            <h3 class="team-card__name">Integrante 4</h3>
+            <p class="team-card__role">Rol por definir</p>
+            <p class="team-card__text">Escribe aquí su participación en el proyecto.</p>
+          </article>
+          <article class="team-card reveal">
+            <div class="team-card__avatar" aria-hidden="true">5</div>
+            <h3 class="team-card__name">Integrante 5</h3>
+            <p class="team-card__role">Rol por definir</p>
+            <p class="team-card__text">Escribe aquí su participación en el proyecto.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- =================================================================
          6. DESCARGAS (juego para PC + app móvil)
          ================================================================= -->
-    <section class="section section--alt" id="descargar" aria-labelledby="descargarTitle">
+    <section class="section" id="descargar" aria-labelledby="descargarTitle">
       <div class="container">
         <header class="section__header reveal">
           <p class="section__eyebrow">Únete</p>
@@ -364,10 +546,16 @@
                    BorraR data-placeholder-link cuando SE PONGA el enlace real -->
               <a href="#" class="btn btn--accent" data-placeholder-link>Disponible en Google Play</a>
 
+              <!-- APK de HellMed Hub: coloca el archivo en downloads/hellmed-hub.apk (ver LEEME-PWA.md) -->
+              <a href="downloads/hellmed-hub.apk" class="btn btn--primary" download>Descargar APK (Android)</a>
+
+              <!-- Aparece solo cuando el navegador permite instalar la PWA -->
+              <button type="button" class="btn btn--outline" id="installBtn" hidden>Instalar como app</button>
+
               <!-- AGREGAR AQUÍ EL LINK DE TU SERVIDOR DE DISCORD -->
               <a href="#" class="btn btn--outline" data-placeholder-link>Únete al Discord</a>
             </div>
-            <p class="download-card__note">iOS: por confirmar.</p>
+            <p class="download-card__note">Para instalar el APK, Android pedirá permitir instalar apps de este origen. iOS: por confirmar.</p>
           </article>
         </div>
       </div>
@@ -506,5 +694,8 @@
 
   <!-- Notificación flotante (toast). JS cambia su texto y la muestra unos segundos -->
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <!-- Aviso que aparece solo cuando el dispositivo no tiene internet -->
+  <div class="offline-banner" id="offlineBanner" role="status" hidden>Sin conexión · Puedes seguir viendo el sitio; el inicio de sesión necesita internet.</div>
 </body>
 </html>

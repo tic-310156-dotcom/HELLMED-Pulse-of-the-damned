@@ -1,0 +1,61 @@
+/* =====================================================================
+   HELLMED — extras.css
+   Estilos de lo agregado después: secciones "Cómo jugar", "Escenarios",
+   "Equipo", teclas, aviso sin conexión. Se carga DESPUÉS de style.css y
+   usa sus mismas variables (colores y tipografías).
+   ===================================================================== */
+[hidden] { display: none !important; }
+
+/* ---- Menú: con 7 enlaces, se aprieta un poco entre 901 y 1180 px ---- */
+@media (min-width: 901px) and (max-width: 1180px) {
+  .navbar__link { font-size: 0.82rem; padding-left: 0.45rem; padding-right: 0.45rem; }
+}
+
+/* ---- Objetivo (segundo párrafo de Historia) ---- */
+.section__lead--goal { margin-top: 0.9rem; }
+.section__lead--goal strong { color: var(--color-gold); }
+
+/* ---- Teclas ---- */
+kbd {
+  display: inline-block; min-width: 1.9em; padding: 0.15em 0.5em; margin: 0 0.12em;
+  font: 600 0.82em var(--font-body); text-align: center; color: var(--color-text);
+  background: var(--color-surface-2); border: 1px solid var(--color-border);
+  border-bottom-width: 3px; border-radius: 4px;
+}
+.controls-note { margin: 1.4rem auto 0; max-width: 760px; text-align: center; font-size: 0.85rem; color: var(--color-text-muted); }
+.specs--controls { margin-top: 2rem; }
+
+/* ---- Escenarios (galería) ---- */
+.gallery { display: grid; gap: 1.4rem; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); }
+.shot {
+  margin: 0; background: var(--color-surface); border: 1px solid var(--color-border);
+  border-radius: var(--radius); overflow: hidden; box-shadow: var(--shadow-card);
+}
+.shot img { display: block; width: 100%; height: auto; aspect-ratio: 16 / 9; object-fit: cover; background: var(--color-bg); }
+.shot figcaption { padding: 1rem 1.1rem 1.2rem; display: grid; gap: 0.35rem; }
+.shot__title { font-family: var(--font-heading); font-size: 1.1rem; letter-spacing: 0.04em; text-transform: uppercase; }
+.shot__text { color: var(--color-text-muted); font-size: 0.92rem; line-height: 1.55; }
+.shot__boss { font-size: 0.82rem; color: var(--color-gold); }
+.gallery__note { margin-top: 1.4rem; text-align: center; font-size: 0.85rem; color: var(--color-text-muted); }
+
+/* ---- Equipo ---- */
+.team { display: grid; gap: 1.2rem; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); }
+.team-card {
+  background: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius);
+  padding: 1.4rem 1.2rem; text-align: center; box-shadow: var(--shadow-card);
+}
+.team-card__avatar {
+  width: 72px; height: 72px; margin: 0 auto 0.9rem; border-radius: 50%;
+  display: grid; place-items: center; font: 700 1.9rem var(--font-heading);
+  color: var(--color-on-primary); background: var(--color-primary); box-shadow: var(--glow-primary);
+}
+.team-card__name { font-family: var(--font-heading); font-size: 1.1rem; letter-spacing: 0.03em; margin: 0; }
+.team-card__role { margin: 0.2rem 0 0.7rem; color: var(--color-accent); font-size: 0.85rem; font-weight: 600; }
+.team-card__text { margin: 0; color: var(--color-text-muted); font-size: 0.88rem; line-height: 1.55; }
+
+/* ---- Aviso sin conexión ---- */
+.offline-banner {
+  position: fixed; left: 0; right: 0; bottom: 0; z-index: 400; padding: 0.6rem 1rem;
+  text-align: center; font: 600 0.9rem var(--font-body);
+  background: var(--color-gold); color: #1a1000;
+}

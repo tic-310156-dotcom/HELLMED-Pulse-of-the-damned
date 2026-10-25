@@ -27,7 +27,9 @@
      =================================================================== */
   const SUPABASE_URL = 'https://hmqhchbkbylqywwcxkfn.supabase.co';
   const SUPABASE_KEY = 'sb_publishable_wmMhnh0HGSdkZxexdQsM5g_DXMu1fq5';
-  const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+  // Si la librería no cargó (sin internet), db queda en null y el resto del sitio sigue funcionando
+  const db = window.supabase ? window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY) : null;
+  const NO_CONNECTION_MSG = 'Sin conexión: necesitas internet para iniciar sesión o registrarte.';
 
   // Traduce los errores de Supabase a mensajes claros en español
   function authErrorMessage(error) {
@@ -640,6 +642,7 @@
     loginForm.addEventListener('submit', async (e) => {
       e.preventDefault(); // Evita que la página se recargue
       if (!validateForm(loginForm)) return;
+      if (!db || !navigator.onLine) { showToast(NO_CONNECTION_MSG, 5000); return; }
 
       const button = $('button[type="submit"]', loginForm);
       button.classList.add('is-loading');
@@ -672,6 +675,7 @@
     registerForm.addEventListener('submit', async (e) => {
       e.preventDefault();
       if (!validateForm(registerForm)) return;
+      if (!db || !navigator.onLine) { showToast(NO_CONNECTION_MSG, 5000); return; }
 
       const button = $('button[type="submit"]', registerForm);
       button.classList.add('is-loading');
@@ -743,6 +747,7 @@
   }
 
   function initSession() {
+    if (!db) return; // sin librería (offline): el botón solo abre el login
     // Con sesión iniciada, el mismo botón cierra la sesión
     $('#openAuth').addEventListener('click', async () => {
       if (!currentUser) return;
@@ -778,6 +783,51 @@
   /* ===================================================================
      10. INIT — punto de arranque
      =================================================================== */
+  /* ===================================================================
+     10. PWA — service worker, botón "Instalar" y aviso sin conexión
+     -------------------------------------------------------------------
+     PWA = página web que se puede instalar como app y abrir sin internet.
+     El archivo sw.js guarda en caché el sitio; aquí solo lo registramos.
+     =================================================================== */
+  function initPWA() {
+    // 1) Registrar el service worker (necesita HTTPS o localhost)
+    if ('serviceWorker' in navigator) {
+      const register = () =>
+        navigator.serviceWorker.register('sw.js').catch((err) => console.warn('Service worker no registrado:', err));
+      if (document.readyState === 'complete') register();
+      else window.addEventListener('load', register);
+    }
+
+    // 2) Botón "Instalar como app": el navegador avisa cuando se puede instalar
+    const installBtn = $('#installBtn');
+    let installEvent = null;
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      installEvent = e;
+      if (installBtn) installBtn.hidden = false;
+    });
+    if (installBtn) {
+      installBtn.addEventListener('click', async () => {
+        if (!installEvent) return;
+        installEvent.prompt();
+        await installEvent.userChoice;
+        installEvent = null;
+        installBtn.hidden = true;
+      });
+    }
+    window.addEventListener('appinstalled', () => {
+      if (installBtn) installBtn.hidden = true;
+      showToast('¡HELLMED instalada!');
+    });
+
+    // 3) Aviso cuando no hay internet
+    const banner = $('#offlineBanner');
+    const updateStatus = () => { if (banner) banner.hidden = navigator.onLine; };
+    window.addEventListener('online', () => { updateStatus(); showToast('Conexión restablecida.'); });
+    window.addEventListener('offline', updateStatus);
+    updateStatus();
+  }
+
   function init() {
     initTheme();
     initNavbar();
@@ -787,6 +837,7 @@
     initModal();
     initForms();
     initSession();
+    initPWA();
     initPlaceholders();
   }
 
