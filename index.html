@@ -533,7 +533,7 @@
             <p class="download-card__note">Versión para consolas: próximamente.</p>
           </article>
 
-          <!-- Tarjeta de la app móvil -->
+                    <!-- Tarjeta de la app móvil -->
           <article class="download-card download-card--app reveal">
             <span class="download-card__tag">App móvil · Foro</span>
             <h3 class="download-card__title">HellMed Hub</h3>
@@ -543,20 +543,34 @@
             </p>
             <p class="download-card__price">Gratis <small>con compras opcionales</small></p>
             <div class="download-card__actions">
-              <!-- AGREGAR AQUÍ EL LINK DE DESCARGA LA APP MÓVIL (Google Play).
-                   BorraR data-placeholder-link cuando SE PONGA el enlace real -->
+              <!-- AGREGAR AQUÍ EL LINK DE GOOGLE PLAY. Borrar data-placeholder-link cuando se ponga el enlace real -->
               <a href="#" class="btn btn--accent" data-placeholder-link>Disponible en Google Play</a>
 
-              <!-- APK de HellMed Hub: coloca el archivo en downloads/hellmed-hub.apk (ver LEEME-PWA.md) -->
-              <a href="downloads/hellmed-hub.apk" class="btn btn--primary" download>Descargar APK (Android)</a>
-
-              <!-- Aparece solo cuando el navegador permite instalar la PWA -->
-              <button type="button" class="btn btn--outline" id="installBtn" hidden>Instalar como app</button>
+              <!-- APK: cuando exista downloads/hellmed-hub.apk, quita el atributo "hidden" -->
+              <a href="downloads/hellmed-hub.apk" class="btn btn--primary" download hidden>Descargar APK (Android)</a>
 
               <!-- AGREGAR AQUÍ EL LINK DE TU SERVIDOR DE DISCORD -->
               <a href="#" class="btn btn--outline" data-placeholder-link>Únete al Discord</a>
             </div>
-            <p class="download-card__note">Para instalar el APK, Android pedirá permitir instalar apps de este origen. iOS: por confirmar.</p>
+            <p class="download-card__note">App móvil independiente para Android. Próximamente.</p>
+          </article>
+
+          <!-- Tarjeta de la página instalable (PWA) -->
+          <article class="download-card reveal">
+            <span class="download-card__tag">Sitio web · PWA</span>
+            <h3 class="download-card__title">Instala esta página</h3>
+            <p class="download-card__text">
+              Guarda el sitio de HELLMED como una app en tu computadora o teléfono y consulta
+              la información del juego aunque no tengas internet. No es el videojuego ni la app HellMed Hub.
+            </p>
+            <div class="download-card__actions">
+              <!-- Aparece solo cuando el navegador permite instalar la PWA (lo controla app.js) -->
+              <button type="button" class="btn btn--primary" id="installBtn" hidden>Instalar página como app</button>
+            </div>
+            <p class="download-card__note">
+              Chrome o Edge: usa el icono de instalar en la barra de direcciones.
+              iPhone (Safari): Compartir → Agregar a pantalla de inicio.
+            </p>
           </article>
         </div>
       </div>
