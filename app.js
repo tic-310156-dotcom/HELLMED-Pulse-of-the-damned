@@ -799,27 +799,42 @@
     }
 
     // 2) Botón "Instalar como app": el navegador avisa cuando se puede instalar
-    const installBtn = $('#installBtn');
+        const installBtn = $('#installBtn');
+    const installMsg = $('#installMsg');
     let installEvent = null;
+    const setMsg = (t) => { if (installMsg) installMsg.textContent = t; };
+    const isInstalled = window.matchMedia('(display-mode: standalone)').matches || navigator.standalone;
+
+    if (isInstalled) {
+      if (installBtn) installBtn.hidden = true;
+      setMsg('Ya estás usando HELLMED como app instalada.');
+    }
+
     window.addEventListener('beforeinstallprompt', (e) => {
       e.preventDefault();
       installEvent = e;
-      if (installBtn) installBtn.hidden = false;
+      setMsg('');
     });
+
     if (installBtn) {
       installBtn.addEventListener('click', async () => {
-        if (!installEvent) return;
+        if (!installEvent) {
+          setMsg('Tu navegador no ofrece la instalación ahora: puede que ya la tengas instalada (ábrela desde chrome://apps) o usa las instrucciones de abajo.');
+          return;
+        }
+        
         installEvent.prompt();
         await installEvent.userChoice;
         installEvent = null;
-        installBtn.hidden = true;
       });
     }
+
     window.addEventListener('appinstalled', () => {
       if (installBtn) installBtn.hidden = true;
+      setMsg('¡HELLMED instalada!');
       showToast('¡HELLMED instalada!');
     });
-
+    
     // 3) Aviso cuando no hay internet
     const banner = $('#offlineBanner');
     const updateStatus = () => { if (banner) banner.hidden = navigator.onLine; };
