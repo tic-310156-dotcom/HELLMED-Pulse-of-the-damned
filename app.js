@@ -799,30 +799,34 @@
     }
 
     // 2) Botón "Instalar como app": el navegador avisa cuando se puede instalar
-        const installBtn = $('#installBtn');
+            const installBtn = $('#installBtn');
     const installMsg = $('#installMsg');
     let installEvent = null;
-    const setMsg = (t) => { if (installMsg) installMsg.textContent = t; };
+    const setMsg = (t) => { if (installMsg) installMsg.textContent = t; if (t) showToast(t); };
     const isInstalled = window.matchMedia('(display-mode: standalone)').matches || navigator.standalone;
+    const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent) ||
+      (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
 
     if (isInstalled) {
       if (installBtn) installBtn.hidden = true;
-      setMsg('Ya estás usando HELLMED como app instalada.');
+      if (installMsg) installMsg.textContent = 'Ya estás usando HELLMED como app instalada.';
     }
 
     window.addEventListener('beforeinstallprompt', (e) => {
       e.preventDefault();
       installEvent = e;
-      setMsg('');
     });
 
     if (installBtn) {
       installBtn.addEventListener('click', async () => {
         if (!installEvent) {
-          setMsg('Tu navegador no ofrece la instalación ahora: puede que ya la tengas instalada (ábrela desde chrome://apps) o usa las instrucciones de abajo.');
+          if (isIOS) {
+            setMsg('En iPhone/iPad: toca Compartir (el cuadro con la flecha) y elige "Agregar a pantalla de inicio".');
+          } else {
+            setMsg('Tu navegador no ofrece la instalación ahora: puede que ya la tengas instalada o usa las instrucciones de abajo.');
+          }
           return;
         }
-        
         installEvent.prompt();
         await installEvent.userChoice;
         installEvent = null;
@@ -832,7 +836,6 @@
     window.addEventListener('appinstalled', () => {
       if (installBtn) installBtn.hidden = true;
       setMsg('¡HELLMED instalada!');
-      showToast('¡HELLMED instalada!');
     });
     
     // 3) Aviso cuando no hay internet
