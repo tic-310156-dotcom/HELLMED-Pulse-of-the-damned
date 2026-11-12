@@ -9,13 +9,14 @@
    SUBE el número de VERSION (v1 → v2 → v3...). Así el navegador borra
    la caché vieja y descarga los archivos nuevos.
    ===================================================================== */
-const VERSION = 'v6';
+const VERSION = 'v7';
 const CACHE = `hellmed-${VERSION}`;
 
 // Archivos esenciales que se guardan al instalar (rutas relativas: sirve en GitHub Pages)
 const PRECACHE = [
   './',
   'index.html',
+  'reset.html',
   'style.css',
   'extras.css',
   'app.js',

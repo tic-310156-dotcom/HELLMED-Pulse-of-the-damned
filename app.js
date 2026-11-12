@@ -1,5 +1,5 @@
 /* =====================================================================
-   HELLMED — main.js
+   HELLMED — app.js
    El "CEREBRO" de la página. Vanilla JS (sin librerías).
 
    ÍNDICE
@@ -11,22 +11,26 @@
      5. Catálogo de personajes (tabs + tarjetas + ficha)
      6. Animaciones de aparición (IntersectionObserver)
      7. Modal de autenticación (abrir/cerrar, tabs, foco)
-     8. Validación de formularios
+     8. Validación de formularios y envío (Supabase)
+     8b. Sesión: botón "Iniciar sesión" / "Salir"
+     8c. Recuperar contraseña
      9. Enlaces placeholder + año del footer
-    10. init(): arranca todo
+    10. PWA + init()
 
    Todo el código vive dentro de una función que se ejecuta sola (IIFE)
    para no "ensuciar" el ámbito global con variables.
-   'use strict' hace que JS marque como error malas prácticas comunes.
    ===================================================================== */
 (function () {
   'use strict';
 
   /* ===================================================================
-     SUPABASE — conexión (la publishable key es pública, es seguro)
+     SUPABASE — conexión al proyecto "Helmell"
+     La publishable key es pública, es seguro dejarla en el código.
+     ⚠ NUNCA pongas aquí la "secret key" (sb_secret_...).
+     La app Android debe usar esta MISMA URL y key para compartir usuarios.
      =================================================================== */
-  const SUPABASE_URL = 'https://hmqhchbkbylqywwcxkfn.supabase.co';
-  const SUPABASE_KEY = 'sb_publishable_wmMhnh0HGSdkZxexdQsM5g_DXMu1fq5';
+  const SUPABASE_URL = 'https://wqvbtmypnvnqcncqvidt.supabase.co';
+  const SUPABASE_KEY = 'sb_publishable__yWj_inp5JvfRD0JmFYAGQ_PR-_NkSg';
   // Si la librería no cargó (sin internet), db queda en null y el resto del sitio sigue funcionando
   const db = window.supabase ? window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY) : null;
   const NO_CONNECTION_MSG = 'Sin conexión: necesitas internet para iniciar sesión o registrarte.';
@@ -139,7 +143,6 @@
   }
 
   // Escapa texto antes de meterlo en innerHTML (evita inyección de HTML / XSS).
-  // Los datos son nuestros, pero es buena práctica cuando en el futuro vengan del backend.
   function escapeHTML(text) {
     const div = document.createElement('div');
     div.textContent = text;
@@ -148,10 +151,6 @@
 
   /* ===================================================================
      2. TEMA DARK / LIGHT
-     -------------------------------------------------------------------
-     1. Leemos el atributo data-theme de <html>.
-     2. Al pulsar el botón lo cambiamos → el CSS usa otras variables.
-     3. Guardamos la elección en localStorage para la próxima visita.
      =================================================================== */
   const THEME_KEY = 'hellmed-theme';
 
@@ -197,7 +196,7 @@
     // --- 3.1 Fondo sólido al hacer scroll ---
     const onScroll = () => navbar.classList.toggle('is-scrolled', window.scrollY > 40);
     onScroll(); // Por si la página carga ya desplazada
-    window.addEventListener('scroll', onScroll, { passive: true }); // passive = mejor rendimiento
+    window.addEventListener('scroll', onScroll, { passive: true });
 
     // --- 3.2 Menú hamburguesa (celular) ---
     function setMenu(open) {
@@ -218,7 +217,6 @@
     });
 
     // --- 3.3 Resaltar el enlace de la sección visible ---
-    // IntersectionObserver avisa cuando un elemento entra o sale de la pantalla
     const links = $$('.navbar__link');
     const sections = links.map((link) => $(link.getAttribute('href'))).filter(Boolean);
 
@@ -239,10 +237,6 @@
 
   /* ===================================================================
      4. HERO: BRASAS
-     -------------------------------------------------------------------
-     Creamos varios <span class="ember"> con posición, tamaño y velocidad
-     al azar. La animación en sí está en CSS (@keyframes emberRise);
-     JS solo le pasa los valores mediante variables CSS (--x, --size...).
      =================================================================== */
   function initEmbers() {
     if (prefersReducedMotion) return;
@@ -251,7 +245,6 @@
     const total = window.innerWidth < 600 ? 18 : 35; // Menos partículas en celular
     const random = (min, max) => Math.random() * (max - min) + min;
 
-    // DocumentFragment: armamos todo "fuera" de la página y lo insertamos una sola vez (más rápido)
     const fragment = document.createDocumentFragment();
     for (let i = 0; i < total; i++) {
       const ember = document.createElement('span');
@@ -268,10 +261,6 @@
 
   /* ===================================================================
      5. CATÁLOGO DE PERSONAJES
-     -------------------------------------------------------------------
-     Flujo:
-       pestaña (Héroes/Enemigos) → renderList() dibuja las tarjetas
-       tarjeta clicada           → renderDetail() dibuja la ficha
      =================================================================== */
   const rosterState = { faction: 'heroes', selectedId: null };
 
@@ -297,7 +286,6 @@
     const list = $('#rosterList');
     const characters = CHARACTERS[rosterState.faction];
 
-    // .map() convierte cada personaje en un string de HTML; .join('') los une
     list.innerHTML = characters
       .map(
         (c) => `
@@ -320,7 +308,6 @@
     const c = CHARACTERS[faction].find((item) => item.id === rosterState.selectedId);
     if (!c) return;
 
-    // Object.entries convierte {Vida: 70} en [['Vida', 70]] para poder recorrerlo
     const statsHTML = Object.entries(c.stats)
       .map(
         ([label, value]) => `
@@ -378,7 +365,7 @@
       const active = tab.dataset.faction === faction;
       tab.classList.toggle('is-active', active);
       tab.setAttribute('aria-selected', String(active));
-      tab.tabIndex = active ? 0 : -1; // Solo la pestaña activa recibe foco con Tab
+      tab.tabIndex = active ? 0 : -1;
       if (active) $('#roster').setAttribute('aria-labelledby', tab.id);
     });
 
@@ -387,11 +374,10 @@
   }
 
   function initRoster() {
-    // Clic en pestañas
     const tabs = $$('.tab');
     tabs.forEach((tab) => tab.addEventListener('click', () => selectFaction(tab.dataset.faction)));
 
-    // Flechas izquierda/derecha para moverse entre pestañas (patrón accesible de tabs)
+    // Flechas izquierda/derecha para moverse entre pestañas
     $('.tabs').addEventListener('keydown', (e) => {
       if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') return;
       const index = tabs.findIndex((t) => t.classList.contains('is-active'));
@@ -401,8 +387,7 @@
       next.focus();
     });
 
-    // DELEGACIÓN DE EVENTOS: un solo listener en el contenedor atiende
-    // los clics de todas las tarjetas, incluso las que se crean después.
+    // Delegación de eventos: un solo listener atiende todas las tarjetas
     $('#rosterList').addEventListener('click', (e) => {
       const card = e.target.closest('.char-card');
       if (card) selectCharacter(card.dataset.id);
@@ -417,7 +402,6 @@
   function initReveal() {
     const elements = $$('.reveal');
 
-    // Navegadores muy viejos sin IntersectionObserver: mostramos todo
     if (!('IntersectionObserver' in window) || prefersReducedMotion) {
       elements.forEach((el) => el.classList.add('is-visible'));
       return;
@@ -432,7 +416,7 @@
           }
         });
       },
-      { threshold: 0.15 } // Se activa cuando el 15 % del elemento es visible
+      { threshold: 0.15 }
     );
     elements.forEach((el) => observer.observe(el));
   }
@@ -448,7 +432,6 @@
     modal.el.setAttribute('aria-hidden', 'false');
     document.body.classList.add('no-scroll');
     switchAuthTab(tab);
-    // Ponemos el cursor en el primer campo (pequeño retraso por la animación)
     setTimeout(() => $('.auth-form:not([hidden]) .field__input', modal.el)?.focus(), 150);
   }
 
@@ -456,7 +439,7 @@
     modal.el.classList.remove('is-open');
     modal.el.setAttribute('aria-hidden', 'true');
     document.body.classList.remove('no-scroll');
-    modal.lastFocused?.focus(); // ?. = solo si existe
+    modal.lastFocused?.focus();
   }
 
   // Cambia entre el formulario de login y el de registro
@@ -525,16 +508,10 @@
      8. VALIDACIÓN DE FORMULARIOS
      -------------------------------------------------------------------
      Cada input declara sus reglas en el HTML: data-rules="required|email"
-     Aquí tenemos un "diccionario" de reglas: cada una recibe el campo y
-     devuelve un mensaje de error (string) o null si está bien.
-     Ventaja: para agregar una regla nueva solo se añade una función aquí.
-
-     ⚠ IMPORTANTE: la validación en el frontend es solo para COMODIDAD del
-     usuario. Cualquiera puede saltársela, así que el BACKEND debe volver a
-     validar todo cuando lo implementen.
+     ⚠ La validación del frontend es solo para comodidad del usuario.
+     La seguridad real la pone Supabase (y las reglas de la base de datos).
      =================================================================== */
 
-  // Expresión regular simple para correos: texto@texto.dominio
   const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
   // Nombre de jugador: 3 a 16 caracteres, letras, números, guion bajo, ñ
   const USERNAME_REGEX = /^[a-zA-Z0-9_ñÑ]{3,16}$/;
@@ -577,7 +554,6 @@
       if (error) break;
     }
 
-    // Pintamos el resultado
     const errorBox = $('#' + input.id + '-error');
     if (errorBox) errorBox.textContent = error || '';
     input.setAttribute('aria-invalid', String(Boolean(error)));
@@ -609,11 +585,6 @@
     const bar = $('#strengthBar');
     bar.style.width = (score / 4) * 100 + '%';
     bar.style.backgroundColor = colors[score];
-  }
-
-  // Simula la petición al servidor (se reemplazará por fetch() al backend)
-  function fakeRequest(ms = 900) {
-    return new Promise((resolve) => setTimeout(resolve, ms));
   }
 
   function initForms() {
@@ -648,7 +619,6 @@
       button.classList.add('is-loading');
       button.textContent = 'Entrando...';
 
-      // FormData lee todos los campos del formulario por su atributo name
       const data = Object.fromEntries(new FormData(loginForm));
 
       const { error } = await db.auth.signInWithPassword({
@@ -762,12 +732,33 @@
   }
 
   /* ===================================================================
+     8c. RECUPERAR CONTRASEÑA
+     -------------------------------------------------------------------
+     Envía un correo con un enlace a reset.html, donde se escribe la
+     nueva contraseña. Sirve para la web y para la app (misma cuenta).
+     =================================================================== */
+  function initRecovery() {
+    const btn = $('#forgotPassword');
+    if (!btn) return;
+    btn.addEventListener('click', async () => {
+      const email = $('#loginEmail');
+      if (!validateField(email)) return;
+      if (!db || !navigator.onLine) { showToast(NO_CONNECTION_MSG, 5000); return; }
+
+      btn.disabled = true;
+      const { error } = await db.auth.resetPasswordForEmail(email.value.trim(), {
+        redirectTo: new URL('reset.html', location.href).href,
+      });
+      btn.disabled = false;
+      showToast(error ? authErrorMessage(error) : 'Te enviamos un correo para restablecer tu contraseña.', 6000);
+    });
+  }
+
+  /* ===================================================================
      9. ENLACES PLACEHOLDER + AÑO
      -------------------------------------------------------------------
-     Los botones de descarga todavía no tienen link real (href="#").
-     Les pusimos data-placeholder-link para avisar al usuario en vez de
-     no hacer nada. Cuando pongan el link real, borren ese atributo y
-     este código deja de afectarlos automáticamente.
+     Los botones sin link real llevan data-placeholder-link para avisar
+     al usuario. Cuando pongan el link real, borren ese atributo.
      =================================================================== */
   function initPlaceholders() {
     $$('[data-placeholder-link]').forEach((link) => {
@@ -780,9 +771,6 @@
     $('#year').textContent = new Date().getFullYear();
   }
 
-  /* ===================================================================
-     10. INIT — punto de arranque
-     =================================================================== */
   /* ===================================================================
      10. PWA — service worker, botón "Instalar" y aviso sin conexión
      -------------------------------------------------------------------
@@ -799,7 +787,7 @@
     }
 
     // 2) Botón "Instalar como app": el navegador avisa cuando se puede instalar
-            const installBtn = $('#installBtn');
+    const installBtn = $('#installBtn');
     const installMsg = $('#installMsg');
     let installEvent = null;
     const setMsg = (t) => { if (installMsg) installMsg.textContent = t; if (t) showToast(t); };
@@ -837,7 +825,7 @@
       if (installBtn) installBtn.hidden = true;
       setMsg('¡HELLMED instalada!');
     });
-    
+
     // 3) Aviso cuando no hay internet
     const banner = $('#offlineBanner');
     const updateStatus = () => { if (banner) banner.hidden = navigator.onLine; };
@@ -846,6 +834,9 @@
     updateStatus();
   }
 
+  /* ===================================================================
+     INIT — punto de arranque
+     =================================================================== */
   function init() {
     initTheme();
     initNavbar();
@@ -854,6 +845,7 @@
     initReveal();
     initModal();
     initForms();
+    initRecovery();
     initSession();
     initPWA();
     initPlaceholders();
