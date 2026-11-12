@@ -24,15 +24,14 @@
   'use strict';
 
   /* ===================================================================
-     SUPABASE — conexión al proyecto "Helmell"
-     La publishable key es pública, es seguro dejarla en el código.
-     ⚠ NUNCA pongas aquí la "secret key" (sb_secret_...).
-     La app Android debe usar esta MISMA URL y key para compartir usuarios.
+     SUPABASE — el cliente se crea en supabase-client.js (configuración
+     compartida con reset.html y con la app móvil).
+     Si la librería no cargó (sin internet), db queda en null y el resto
+     del sitio sigue funcionando.
      =================================================================== */
-  const SUPABASE_URL = 'https://wqvbtmypnvnqcncqvidt.supabase.co';
-  const SUPABASE_KEY = 'sb_publishable__yWj_inp5JvfRD0JmFYAGQ_PR-_NkSg';
-  // Si la librería no cargó (sin internet), db queda en null y el resto del sitio sigue funcionando
-  const db = window.supabase ? window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY) : null;
+  const HM = window.HELLMED || { CONFIG: {}, db: null, setRemember: () => {} };
+  const db = HM.db;
+  const CONFIG = HM.CONFIG;
   const NO_CONNECTION_MSG = 'Sin conexión: necesitas internet para iniciar sesión o registrarte.';
 
   // Traduce los errores de Supabase a mensajes claros en español
@@ -44,6 +43,8 @@
     if (msg.includes('email not confirmed')) return 'Confirma tu correo antes de entrar.';
     if (msg.includes('rate limit')) return 'Demasiados intentos. Espera un momento.';
     if (msg.includes('database error')) return 'Ese nombre de jugador ya existe. Elige otro.';
+    if (msg.includes('password') && msg.includes('characters')) return 'La contraseña es demasiado corta.';
+    if (msg.includes('fetch')) return NO_CONNECTION_MSG;
     return 'Ocurrió un error. Intenta de nuevo.';
   }
 
@@ -65,7 +66,7 @@
         id: 'cruz',
         name: 'Hermano Cruz',
         role: 'Exsacerdote · Paramédico',
-        image: '', // AGREGAR AQUÍ el sprite: 'assets/img/hermano-cruz.png'
+        image: 'assets/img/personajes/hermano-cruz', // sin tamaño ni extensión (ver responsivePicture)
         quote: 'La fe me dio fuerza. La medicina me dio las manos para usarla.',
         description:
           'Tras ver en una visión la muerte de su esposa, dejó los hábitos para hacerse paramédico. Al salvarla rompió el equilibrio cósmico y los demonios se la llevaron. Ahora combate con la Cruz Consagrada y se cura con su botiquín de primeros auxilios.',
@@ -76,7 +77,7 @@
         id: 'phantom',
         name: 'Phantom',
         role: 'Espíritu guía',
-        image: '', // AGREGAR AQUÍ el sprite: 'assets/img/phantom.png'
+        image: 'assets/img/personajes/phantom', // sin tamaño ni extensión (ver responsivePicture)
         quote: 'No pude salvar a mis pacientes. A ti sí te voy a sacar de aquí.',
         description:
           'El espíritu de un médico que murió intentando salvar a sus pacientes. Acompaña al Hermano Cruz: lo advierte de trampas, da pistas, lanza ataques espectrales y lo revive una vez por nivel.',
@@ -89,7 +90,7 @@
         id: 'gargola',
         name: 'La Gárgola',
         role: 'Guardiana de la Catedral en Ruinas',
-        image: '', // AGREGAR AQUÍ el sprite: 'assets/img/gargola.png'
+        image: 'assets/img/personajes/gargola', // sin tamaño ni extensión (ver responsivePicture)
         quote: 'La piedra no reza. La piedra espera.',
         description:
           'Estatua profanada que despierta en la Catedral en Ruinas. Ataca en picada desde las alturas: es el primer reto que enseña a esquivar y a contraatacar.',
@@ -100,7 +101,7 @@
         id: 'muerte',
         name: 'La Muerte',
         role: 'Cazadora de almas · Ciudad',
-        image: '', // AGREGAR AQUÍ el sprite: 'assets/img/muerte.png'
+        image: 'assets/img/personajes/muerte', // sin tamaño ni extensión (ver responsivePicture)
         quote: 'Tú me robaste una vida. Vengo a cobrarla.',
         description:
           'Furiosa porque el Hermano Cruz le arrebató a su esposa, recorre la Ciudad con su guadaña. Se teletransporta entre sombras y drena la vida del jugador.',
@@ -111,7 +112,7 @@
         id: 'minotauro',
         name: 'El Minotauro',
         role: 'Bestia del Bosque de las Sombras',
-        image: '', // AGREGAR AQUÍ el sprite: 'assets/img/minotauro.png'
+        image: 'assets/img/personajes/minotauro', // sin tamaño ni extensión (ver responsivePicture)
         quote: '¡GRRRAAAH!',
         description:
           'Coloso que domina el Bosque de las Sombras. Lento pero devastador: sus cargas rompen el escenario y obligan a usar el doble salto en el momento justo.',
@@ -265,7 +266,7 @@
   const rosterState = { faction: 'heroes', selectedId: null };
 
   // Devuelve el HTML del retrato: imagen si existe, si no las iniciales
-  function portraitHTML(character, faction) {
+  function portraitHTML(character, faction, big = false) {
     const initials = character.name
       .replace(/^(El|La|Los|Las)\s+/i, '') // "La Muerte" → "Muerte"
       .split(' ')
@@ -274,12 +275,61 @@
       .slice(0, 2)
       .toUpperCase();
 
+    // big = ficha grande (hasta 800 px); si no, miniatura de la lista (400 px basta)
     const inner = character.image
-      ? `<img src="${escapeHTML(character.image)}" alt="" loading="lazy">`
+      ? responsivePicture(character.image, '', big ? '(max-width: 700px) 60vw, 220px' : '64px', {
+          eager: big,
+          initials
+        })
       : escapeHTML(initials);
 
-    return `<span class="portrait" data-faction="${faction}" aria-hidden="true">${inner}</span>`;
+    return `<span class="portrait" data-faction="${faction}" data-initials="${escapeHTML(initials)}" aria-hidden="true">${inner}</span>`;
   }
+
+  /* -------------------------------------------------------------------
+     Imágenes responsivas (personajes, lugares y galería)
+     Convención de archivos (la genera tools/optimizar_imagenes.py):
+        <base>-400.webp, <base>-800.webp, <base>-1200.webp, <base>-800.jpg
+     El navegador descarga SOLO el tamaño que necesita según "sizes".
+     ------------------------------------------------------------------- */
+  const IMG_WIDTHS = [400, 800, 1200];
+
+  function responsivePicture(base, alt, sizes, opts = {}) {
+    const b = escapeHTML(base);
+    const srcset = IMG_WIDTHS.map((w) => `${b}-${w}.webp ${w}w`).join(', ');
+    const loading = opts.eager ? 'eager' : 'lazy';
+    const dims = opts.width ? ` width="${opts.width}" height="${opts.height}"` : '';
+    const fb = opts.fallbackSrc ? ` data-fallback-src="${escapeHTML(opts.fallbackSrc)}"` : '';
+    return `<picture>
+        <source type="image/webp" srcset="${srcset}" sizes="${sizes}">
+        <img src="${b}-800.jpg" alt="${escapeHTML(alt)}" loading="${loading}" decoding="async"${dims}
+             data-fallback="${escapeHTML(opts.initials || '')}"${fb}>
+      </picture>`;
+  }
+
+  // Si una imagen todavía no existe (404), en vez de un icono roto:
+  //  - retratos → se muestran las iniciales
+  //  - galería / escenarios → se queda la ilustración SVG de respaldo o se oculta
+  function initImageFallbacks() {
+    document.addEventListener(
+      'error',
+      (e) => {
+        const img = e.target;
+        if (!(img instanceof HTMLImageElement) || !img.hasAttribute('data-fallback')) return;
+        const portrait = img.closest('.portrait');
+        if (portrait) { portrait.textContent = portrait.dataset.initials || ''; return; }
+        const svg = img.dataset.fallbackSrc;
+        if (svg && !img.src.endsWith(svg)) {
+          img.closest('picture')?.querySelectorAll('source').forEach((s) => s.remove());
+          img.src = svg;
+          return;
+        }
+        img.closest('.gallery-item')?.setAttribute('hidden', '');
+      },
+      true // "captura": los errores de <img> no burbujean
+    );
+  }
+
 
   // Dibuja la lista de tarjetas de la facción actual
   function renderList() {
@@ -321,7 +371,7 @@
     const abilitiesHTML = c.abilities.map((a) => `<li class="chip">${escapeHTML(a)}</li>`).join('');
 
     detail.innerHTML = `
-      ${portraitHTML(c, faction)}
+      ${portraitHTML(c, faction, true)}
       <div>
         <span class="detail__tag detail__tag--${faction}">${faction === 'heroes' ? 'Héroe' : 'Enemigo'}</span>
         <h3 class="detail__name">${escapeHTML(c.name)}</h3>
@@ -394,6 +444,115 @@
     });
 
     selectFaction('heroes'); // Estado inicial
+  }
+
+  /* ===================================================================
+     5B. GALERÍA (personajes + lugares) y VISOR A PANTALLA COMPLETA
+     -------------------------------------------------------------------
+     Para AGREGAR una imagen: guarda el original en originales/personajes
+     u originales/lugares, corre tools/optimizar_imagenes.py y añade un
+     objeto aquí. "base" = ruta sin tamaño ni extensión.
+     "pixel: true" mantiene nítido el pixel art al ampliarlo.
+     =================================================================== */
+  const GALERIA = [
+    { tipo: 'personajes', base: 'assets/img/personajes/hermano-cruz', titulo: 'Hermano Cruz', texto: 'Exsacerdote convertido en paramédico.', pixel: true },
+    { tipo: 'personajes', base: 'assets/img/personajes/hermano-cruz-sacerdote', titulo: 'Hermano Cruz (sacerdote)', texto: 'Antes de colgar los hábitos.', pixel: true },
+    { tipo: 'personajes', base: 'assets/img/personajes/phantom', titulo: 'Phantom', texto: 'El espíritu del médico caído que te guía.', pixel: true },
+    { tipo: 'personajes', base: 'assets/img/personajes/gargola', titulo: 'La Gárgola', texto: 'Jefa de la Catedral en Ruinas.', pixel: true },
+    { tipo: 'personajes', base: 'assets/img/personajes/muerte', titulo: 'La Muerte', texto: 'Jefa de la Ciudad.', pixel: true },
+    { tipo: 'personajes', base: 'assets/img/personajes/minotauro', titulo: 'El Minotauro', texto: 'Jefe del Bosque de las Sombras.', pixel: true },
+    { tipo: 'lugares', base: 'assets/img/lugares/catedral-en-ruinas', titulo: 'Catedral en Ruinas', texto: 'Nivel 1', fallback: 'assets/img/escena-catedral.svg' },
+    { tipo: 'lugares', base: 'assets/img/lugares/ciudad', titulo: 'Ciudad', texto: 'Nivel 2', fallback: 'assets/img/escena-ciudad.svg' },
+    { tipo: 'lugares', base: 'assets/img/lugares/bosque-de-las-sombras', titulo: 'Bosque de las Sombras', texto: 'Nivel 3', fallback: 'assets/img/escena-bosque.svg' },
+    { tipo: 'lugares', base: 'assets/img/lugares/infierno', titulo: 'El Infierno', texto: 'Zona final · Castillo del Infierno' },
+    { tipo: 'lugares', base: 'assets/img/lugares/mapa-del-mundo', titulo: 'Mapa del mundo', texto: 'El camino al infierno' }
+  ];
+
+  function renderGallery(filter = 'todos') {
+    const grid = $('#galleryGrid');
+    if (!grid) return;
+    const items = GALERIA.map((item, i) => ({ ...item, i })).filter((it) => filter === 'todos' || it.tipo === filter);
+
+    grid.innerHTML = items
+      .map(
+        (it) => `
+        <figure class="gallery-item gallery-item--${it.tipo}${it.pixel ? ' is-pixel' : ''}">
+          <button type="button" class="gallery-item__open" data-lightbox="${it.i}"
+                  aria-label="Ampliar imagen: ${escapeHTML(it.titulo)}">
+            ${responsivePicture(
+              it.base,
+              it.titulo,
+              '(max-width: 600px) 50vw, (max-width: 1100px) 33vw, 300px',
+              { width: 800, height: it.tipo === 'lugares' ? 450 : 1067, fallbackSrc: it.fallback }
+            )}
+          </button>
+          <figcaption><strong>${escapeHTML(it.titulo)}</strong><span>${escapeHTML(it.texto)}</span></figcaption>
+        </figure>`
+      )
+      .join('');
+  }
+
+  function initGallery() {
+    const filters = $$('[data-gallery-filter]');
+    filters.forEach((btn) =>
+      btn.addEventListener('click', () => {
+        filters.forEach((b) => b.setAttribute('aria-pressed', String(b === btn)));
+        renderGallery(btn.dataset.galleryFilter);
+      })
+    );
+    renderGallery();
+  }
+
+  // Visor (lightbox) con <dialog>: Esc cierra solo, flechas ← → navegan
+  function initLightbox() {
+    const dialog = $('#lightbox');
+    if (!dialog || typeof dialog.showModal !== 'function') return;
+    const img = $('#lightboxImg');
+    const source = $('#lightboxSource');
+    const caption = $('#lightboxCaption');
+    let index = 0;
+    let visibles = [];
+
+    function show(i) {
+      index = (i + visibles.length) % visibles.length;
+      const it = GALERIA[visibles[index]];
+      source.srcset = IMG_WIDTHS.map((w) => `${it.base}-${w}.webp ${w}w`).join(', ');
+      img.src = `${it.base}-800.jpg`;
+      img.dataset.fallbackSrc = it.fallback || '';
+      img.alt = it.titulo;
+      img.classList.toggle('is-pixel', Boolean(it.pixel));
+      caption.textContent = `${it.titulo} · ${it.texto}`;
+    }
+
+    document.addEventListener('click', (e) => {
+      const trigger = e.target.closest('[data-lightbox]');
+      if (!trigger) return;
+      // Solo navega entre las imágenes que se ven (respeta el filtro y las que no existen)
+      visibles = $$('#galleryGrid .gallery-item:not([hidden]) [data-lightbox]').map((b) => Number(b.dataset.lightbox));
+      if (!visibles.length) return;
+      const pos = visibles.indexOf(Number(trigger.dataset.lightbox));
+      show(pos < 0 ? 0 : pos);
+      dialog.showModal();
+      document.body.classList.add('no-scroll');
+    });
+
+    // Si la versión grande no existe, usa la ilustración de respaldo
+    img.addEventListener('error', () => {
+      if (img.dataset.fallbackSrc && !img.src.endsWith(img.dataset.fallbackSrc)) {
+        source.srcset = '';
+        img.src = img.dataset.fallbackSrc;
+      }
+    });
+
+    $('#lightboxPrev').addEventListener('click', () => show(index - 1));
+    $('#lightboxNext').addEventListener('click', () => show(index + 1));
+    $('#lightboxClose').addEventListener('click', () => dialog.close());
+    dialog.addEventListener('click', (e) => { if (e.target === dialog) dialog.close(); }); // clic fuera de la imagen
+    dialog.addEventListener('close', () => document.body.classList.remove('no-scroll'));
+    dialog.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight') show(index + 1);
+      if (e.key === 'ArrowLeft') show(index - 1);
+    });
   }
 
   /* ===================================================================
@@ -621,6 +780,9 @@
 
       const data = Object.fromEntries(new FormData(loginForm));
 
+      // "Recordarme" decide si la sesión sobrevive al cerrar el navegador (ver supabase-client.js)
+      HM.setRemember(Boolean(data.remember));
+
       const { error } = await db.auth.signInWithPassword({
         email: data.email.trim(),
         password: data.password,
@@ -654,12 +816,15 @@
       const data = Object.fromEntries(new FormData(registerForm));
       const username = data.username.trim();
 
-      // Revisar que el nombre de jugador no exista (profiles es de lectura pública)
-      const { data: taken } = await db
-        .from('profiles')
-        .select('id')
-        .eq('username', username)
-        .maybeSingle();
+      // Revisar que el nombre de jugador no exista (sin distinguir mayúsculas).
+      // username_disponible() está en supabase/01_cuentas_compartidas.sql y la usa también la app.
+      const { data: libre, error: rpcError } = await db.rpc('username_disponible', { nombre: username });
+      let taken = rpcError ? false : libre === false;
+      if (rpcError) {
+        // Respaldo por si aún no corriste el SQL nuevo
+        const { data: row } = await db.from('profiles').select('id').ilike('username', username).maybeSingle();
+        taken = Boolean(row);
+      }
 
       if (taken) {
         button.classList.remove('is-loading');
@@ -668,11 +833,23 @@
         return;
       }
 
-      // El username viaja en "data": el trigger lo copia a la tabla profiles
+      // Al registrarse, la sesión se recuerda por defecto
+      HM.setRemember(true);
+
+      // Los datos de "data" los copia el trigger handle_new_user a la tabla profiles.
+      // La app móvil manda exactamente los mismos campos (con platform: 'android').
       const { data: result, error } = await db.auth.signUp({
         email: data.email.trim(),
         password: data.password,
-        options: { data: { username } },
+        options: {
+          data: {
+            username,
+            privacy_version: CONFIG.PRIVACY_VERSION,
+            privacy_accepted_at: new Date().toISOString(),
+            platform: 'web'
+          },
+          emailRedirectTo: CONFIG.SITE_URL // el enlace de confirmación regresa al sitio ya con sesión
+        },
       });
 
       button.classList.remove('is-loading');
@@ -841,7 +1018,10 @@
     initTheme();
     initNavbar();
     initEmbers();
+    initImageFallbacks();
     initRoster();
+    initGallery();
+    initLightbox();
     initReveal();
     initModal();
     initForms();
@@ -852,4 +1032,4 @@
   }
 
   init(); // Gracias a "defer" en el <script>, el HTML ya existe aquí
-})();
+})();

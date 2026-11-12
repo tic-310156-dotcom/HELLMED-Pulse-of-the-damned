@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<!--
+  HELLMED · Aviso de privacidad integral
+  FUENTE ÚNICA: este mismo archivo lo muestran
+    - la web (enlace en el registro y en el footer)
+    - la app móvil (WebView; copia sin conexión en app/src/main/assets/legal/)
+  Si lo cambias: sube la fecha/versión aquí, en app.js (PRIVACY_VERSION)
+  y en la app (Legal.kt → VERSION_AVISO), y vuelve a copiarlo a la app.
+  ⚠ Plantilla preparada para un proyecto escolar. Antes de publicar el juego
+  de forma comercial, que la revise una persona con conocimientos legales.
+-->
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="color-scheme" content="dark light">
+  <title>Aviso de privacidad · HELLMED</title>
+  <style>
+    :root { --bg:#0b0708; --surface:#1a1112; --text:#f3ebe7; --muted:#a89894; --primary:#d3202a; --gold:#e0a43a; --border:rgba(255,255,255,.09); }
+    @media (prefers-color-scheme: light) {
+      :root { --bg:#f5f0ea; --surface:#ffffff; --text:#1e1515; --muted:#6a5b57; --primary:#b3121b; --gold:#9a6a12; --border:rgba(40,20,20,.12); }
+    }
+    * { box-sizing: border-box; }
+    body { margin:0; background:var(--bg); color:var(--text); font:16px/1.65 Inter, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+    main { max-width: 820px; margin: 0 auto; padding: 1.5rem 1.15rem 3rem; }
+    .top { display:flex; justify-content:space-between; align-items:center; gap:1rem; margin-bottom:1rem; }
+    .brand { font:700 1.2rem Oswald, "Arial Narrow", sans-serif; letter-spacing:.08em; }
+    .brand span { color: var(--primary); }
+    a { color: var(--primary); }
+    h1 { font:700 1.6rem/1.25 Oswald, "Arial Narrow", sans-serif; letter-spacing:.03em; text-transform:uppercase; margin:.4rem 0 .2rem; }
+    h2 { font:600 1.1rem Oswald, "Arial Narrow", sans-serif; letter-spacing:.04em; text-transform:uppercase; margin:2rem 0 .5rem; color: var(--gold); }
+    .meta { color: var(--muted); font-size:.9rem; }
+    .box { background:var(--surface); border:1px solid var(--border); border-radius:6px; padding:1rem 1.1rem; }
+    ul { padding-left: 1.2rem; }
+    li { margin:.25rem 0; }
+    table { width:100%; border-collapse:collapse; font-size:.93rem; }
+    th, td { text-align:left; vertical-align:top; padding:.55rem .5rem; border-bottom:1px solid var(--border); }
+    th { color: var(--muted); font-weight:600; }
+    body.en-app .top { display:none; } /* En la app móvil no hace falta el enlace de regreso */
+  </style>
+</head>
+<body>
+  <script>if (/[?&]app=1/.test(location.search)) document.body.classList.add('en-app');</script>
+  <main>
+    <div class="top">
+      <span class="brand">HELL<span>MED</span></span>
+      <a href="../index.html">← Volver al sitio</a>
+    </div>
+
+    <h1>Aviso de privacidad integral</h1>
+    <p class="meta">Aplica al sitio web de HELLMED: Pulse of the Damned y a la app móvil HellMed Hub.<br>
+      Versión <strong id="version">2026-11-11</strong> · Última actualización: 11 de noviembre de 2026.</p>
+
+    <h2>1. Quién es responsable de tus datos</h2>
+    <p>El <strong>Equipo HELLMED</strong>, grupo de estudiantes de Ingeniería en Desarrollo y Gestión de Software de la
+      Universidad Tecnológica de Nayarit, con domicilio para oír y recibir notificaciones en Tepic, Nayarit, México
+      (<strong>[DOMICILIO COMPLETO]</strong>), es responsable del tratamiento de los datos personales que nos proporciones,
+      conforme a la Ley Federal de Protección de Datos Personales en Posesión de los Particulares (DOF 20-03-2025).</p>
+    <p>Contacto de privacidad: <strong>[CORREO DE CONTACTO]</strong>.</p>
+
+    <h2>2. Qué datos recabamos</h2>
+    <div class="box">
+      <table>
+        <tr><th>Dato</th><th>Dónde</th><th>Para qué</th></tr>
+        <tr><td>Correo electrónico</td><td>Web y app</td><td>Identificar tu cuenta e iniciar sesión.</td></tr>
+        <tr><td>Nombre de jugador</td><td>Web y app</td><td>Mostrarte en la comunidad y en tu perfil.</td></tr>
+        <tr><td>Contraseña</td><td>Web y app</td><td>Proteger tu cuenta. Se guarda cifrada (hash) por nuestro proveedor; el equipo nunca la puede ver.</td></tr>
+        <tr><td>Fecha y versión del aviso aceptado</td><td>Web y app</td><td>Demostrar que aceptaste este aviso.</td></tr>
+        <tr><td>Foto de perfil</td><td>Solo app</td><td>Se guarda únicamente en tu teléfono; no se sube a nuestros servidores.</td></tr>
+        <tr><td>Datos técnicos (dirección IP, fecha y hora de acceso, tipo de navegador o dispositivo)</td><td>Web y app</td><td>Seguridad de la cuenta y prevención de abusos. Los registra automáticamente nuestro proveedor.</td></tr>
+      </table>
+    </div>
+    <p>No recabamos datos personales sensibles, financieros ni de ubicación.</p>
+
+    <h2>3. Finalidades</h2>
+    <p><strong>Necesarias</strong> (sin ellas no podemos darte el servicio):</p>
+    <ul>
+      <li>Crear y administrar tu cuenta única para la web y la app HellMed Hub.</li>
+      <li>Iniciar sesión y mantenerla abierta en tus dispositivos.</li>
+      <li>Restablecer tu contraseña cuando lo pidas.</li>
+      <li>Mostrar tu nombre de jugador en las funciones de comunidad.</li>
+      <li>Mantener la seguridad del servicio.</li>
+    </ul>
+    <p><strong>Secundarias:</strong> ninguna. No usamos tus datos para publicidad ni los vendemos.</p>
+
+    <h2>4. Con quién compartimos tus datos</h2>
+    <p>Usamos <strong>Supabase</strong> como proveedor de base de datos y autenticación. Actúa como encargado: guarda los datos
+      por cuenta nuestra y no puede usarlos para fines propios. Sus servidores pueden estar fuera de México.
+      Fuera de eso, no transferimos tus datos a terceros, salvo que una autoridad competente lo requiera conforme a la ley.</p>
+
+    <h2>5. Almacenamiento en tu dispositivo</h2>
+    <p>Para que no tengas que escribir tu correo y contraseña cada vez, guardamos en tu navegador (almacenamiento local) o en
+      tu teléfono un <em>token</em> de sesión, nunca tu contraseña. En la web, si desmarcas “Recordarme”, el token se borra al
+      cerrar el navegador. Puedes eliminarlo en cualquier momento con “Cerrar sesión”. No usamos cookies de rastreo.</p>
+
+    <h2>6. Tus derechos (ARCO) y cómo revocar tu consentimiento</h2>
+    <p>Puedes <strong>acceder</strong> a tus datos, <strong>rectificarlos</strong>, pedir su <strong>cancelación</strong>
+      (borrar tu cuenta) u <strong>oponerte</strong> a su tratamiento, así como revocar tu consentimiento.
+      Escríbenos a <strong>[CORREO DE CONTACTO]</strong> con:</p>
+    <ul>
+      <li>Tu nombre y el correo de tu cuenta.</li>
+      <li>Qué derecho quieres ejercer y una descripción clara de lo que pides.</li>
+    </ul>
+    <p>Te responderemos en un plazo máximo de 20 días hábiles. Tu nombre de jugador y tu contraseña también los puedes
+      cambiar tú mismo desde la app.</p>
+    <p>Si consideras que tu derecho a la protección de datos fue vulnerado, puedes acudir a la
+      <strong>Secretaría Anticorrupción y Buen Gobierno</strong>, autoridad en la materia.</p>
+
+    <h2>7. Menores de edad</h2>
+    <p>HELLMED está clasificado para mayores de 12 años. Si eres menor de 18, crea tu cuenta con permiso y acompañamiento de
+      tu madre, padre o tutor.</p>
+
+    <h2>8. Cuánto tiempo guardamos tus datos</h2>
+    <p>Mientras tu cuenta exista. Si pides borrarla, eliminamos tus datos en un plazo máximo de 30 días, salvo lo que la ley
+      nos obligue a conservar.</p>
+
+    <h2>9. Cambios a este aviso</h2>
+    <p>Si cambiamos este aviso, publicaremos la nueva versión en esta misma página y en la app, con su nueva fecha.
+      Si el cambio es importante, te lo avisaremos en el sitio y en la app.</p>
+
+    <p class="meta" style="margin-top:2.5rem">Consulta también los <a href="terminos.html">Términos de uso</a>.</p>
+  </main>
+</body>
+</html>

@@ -60,6 +60,8 @@
   <!-- "defer" = el JS se ejecuta cuando el HTML ya terminó de cargar -->
   <!-- Supabase (autenticación y base de datos). Debe ir ANTES de app.js -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js" defer></script>
+  <!-- Configuración compartida de Supabase + sesión persistente (antes de app.js) -->
+  <script src="supabase-client.js" defer></script>
   <script src="app.js" defer></script>
 </head>
 
@@ -86,6 +88,7 @@
           <li><a href="#personajes" class="navbar__link">Personajes</a></li>
           <li><a href="#jugar" class="navbar__link">Jugar</a></li>
           <li><a href="#escenarios" class="navbar__link">Escenarios</a></li>
+          <li><a href="#galeria" class="navbar__link">Galería</a></li>
           <li><a href="#requisitos" class="navbar__link">Requisitos</a></li>
           <li><a href="#equipo" class="navbar__link">Equipo</a></li>
           <li><a href="#descargar" class="navbar__link">Descargar</a></li>
@@ -244,9 +247,12 @@
 
     <!-- =================================================================
          4. CATÁLOGO DE PERSONAJES Y ENEMIGOS
-         Las tarjetas NO están escritas aquí: JavaScript las genera a partir
-         del arreglo CHARACTERS (js/main.js). Así, para agregar un personaje
-         solo editas los datos, no el HTML.
+         Las tarjetas ya vienen escritas aquí CON SUS IMÁGENES (Héroes y la
+         ficha del Hermano Cruz), así se ven aunque JavaScript tarde en cargar.
+         Al cargar, JavaScript las vuelve a dibujar desde el arreglo
+         CHARACTERS (app.js) y, al tocar la pestaña "Enemigos", muestra a
+         La Gárgola, La Muerte y El Minotauro.
+         Imágenes: assets/img/personajes/<nombre>-400/800/1200.webp y -800.jpg
          ================================================================= -->
     <section class="section section--alt" id="personajes" aria-labelledby="personajesTitle">
       <div class="container">
@@ -264,18 +270,94 @@
           </button>
           <button class="tab" type="button" role="tab" id="tab-enemigos"
                   aria-selected="false" aria-controls="roster" data-faction="enemigos" tabindex="-1">
-            ☠ Enemigos  <!--==U+2620 CODE DE LA  BACTERIA ESA==-->
+            ☠ Enemigos <!--==U+2620 CODE DE LA CALAVERA==-->
           </button>
         </div>
 
         <!-- Panel principal: lista de tarjetas + ficha de detalle -->
         <div class="roster reveal" id="roster" role="tabpanel" aria-labelledby="tab-heroes">
-          <!-- Aquí JS inserta los botones/tarjetas de cada personaje -->
-          <div class="roster__list" id="rosterList"></div>
 
-          <!-- Aquí JS dibuja la ficha del personaje seleccionado.
+          <!-- ===== LISTA DE PERSONAJES (Héroes) ===== -->
+          <div class="roster__list" id="rosterList">
+
+            <!-- Hermano Cruz -->
+            <button class="char-card" type="button" data-id="cruz" aria-pressed="true">
+              <span class="portrait" data-faction="heroes" data-initials="HC" aria-hidden="true">
+                <picture>
+                  <source type="image/webp" sizes="64px"
+                          srcset="assets/img/personajes/hermano-cruz-400.webp 400w, assets/img/personajes/hermano-cruz-800.webp 800w, assets/img/personajes/hermano-cruz-1200.webp 1200w">
+                  <img src="assets/img/personajes/hermano-cruz-800.jpg" alt="" loading="lazy" decoding="async" data-fallback="HC">
+                </picture>
+              </span>
+              <span>
+                <span class="char-card__name">Hermano Cruz</span>
+                <span class="char-card__role">Exsacerdote · Paramédico</span>
+              </span>
+            </button>
+
+            <!-- Phantom -->
+            <button class="char-card" type="button" data-id="phantom" aria-pressed="false">
+              <span class="portrait" data-faction="heroes" data-initials="P" aria-hidden="true">
+                <picture>
+                  <source type="image/webp" sizes="64px"
+                          srcset="assets/img/personajes/phantom-400.webp 400w, assets/img/personajes/phantom-800.webp 800w, assets/img/personajes/phantom-1200.webp 1200w">
+                  <img src="assets/img/personajes/phantom-800.jpg" alt="" loading="lazy" decoding="async" data-fallback="P">
+                </picture>
+              </span>
+              <span>
+                <span class="char-card__name">Phantom</span>
+                <span class="char-card__role">Espíritu guía</span>
+              </span>
+            </button>
+          </div>
+
+          <!-- ===== FICHA DEL PERSONAJE SELECCIONADO =====
                aria-live="polite" hace que los lectores de pantalla anuncien el cambio -->
-          <article class="roster__detail" id="rosterDetail" aria-live="polite"></article>
+          <article class="roster__detail" id="rosterDetail" aria-live="polite">
+            <span class="portrait" data-faction="heroes" data-initials="HC" aria-hidden="true">
+              <picture>
+                <source type="image/webp" sizes="(max-width: 700px) 60vw, 220px"
+                        srcset="assets/img/personajes/hermano-cruz-400.webp 400w, assets/img/personajes/hermano-cruz-800.webp 800w, assets/img/personajes/hermano-cruz-1200.webp 1200w">
+                <img src="assets/img/personajes/hermano-cruz-800.jpg" alt="" loading="eager" decoding="async" data-fallback="HC">
+              </picture>
+            </span>
+            <div>
+              <span class="detail__tag detail__tag--heroes">Héroe</span>
+              <h3 class="detail__name">Hermano Cruz</h3>
+              <p class="detail__role">Exsacerdote · Paramédico</p>
+              <blockquote class="detail__quote">“La fe me dio fuerza. La medicina me dio las manos para usarla.”</blockquote>
+              <p class="detail__desc">Tras ver en una visión la muerte de su esposa, dejó los hábitos para hacerse paramédico. Al salvarla rompió el equilibrio cósmico y los demonios se la llevaron. Ahora combate con la Cruz Consagrada y se cura con su botiquín de primeros auxilios.</p>
+
+              <h4 class="detail__subtitle">Estadísticas</h4>
+              <div class="stats">
+                <div class="stat">
+                  <div class="stat__label"><span>Vida</span><span>70</span></div>
+                  <div class="stat__track"><div class="stat__fill" data-value="70" style="width: 70%;"></div></div>
+                </div>
+                <div class="stat">
+                  <div class="stat__label"><span>Ataque</span><span>65</span></div>
+                  <div class="stat__track"><div class="stat__fill" data-value="65" style="width: 65%;"></div></div>
+                </div>
+                <div class="stat">
+                  <div class="stat__label"><span>Agilidad</span><span>60</span></div>
+                  <div class="stat__track"><div class="stat__fill" data-value="60" style="width: 60%;"></div></div>
+                </div>
+                <div class="stat">
+                  <div class="stat__label"><span>Curación</span><span>90</span></div>
+                  <div class="stat__track"><div class="stat__fill" data-value="90" style="width: 90%;"></div></div>
+                </div>
+              </div>
+
+              <h4 class="detail__subtitle">Habilidades</h4>
+              <ul class="chips">
+                <li class="chip">Cruz Consagrada</li>
+                <li class="chip">Botiquín de primeros auxilios</li>
+                <li class="chip">Doble salto</li>
+                <li class="chip">Cántico Sagrado</li>
+                <li class="chip">Lanza de Luz</li>
+              </ul>
+            </div>
+          </article>
         </div>
       </div>
     </section>
@@ -355,8 +437,9 @@
 
     <!-- =================================================================
          4C. ESCENARIOS Y NIVELES (ilustraciones conceptuales)
-         Cuando tengan capturas reales de la build, cambien el src de cada
-         <img> por la ruta de la captura (ej. assets/img/captura-nivel1.png).
+         Imágenes reales: assets/img/lugares/<nombre>-{400,800,1200}.webp y -800.jpg
+         (las genera tools/optimizar_imagenes.py). Mientras no existan, se ve
+         automáticamente la ilustración SVG de assets/img/ (data-fallback-src).
          ================================================================= -->
     <section class="section section--alt" id="escenarios" aria-labelledby="escenariosTitle">
       <div class="container">
@@ -368,8 +451,14 @@
 
         <div class="gallery">
           <figure class="shot reveal">
-            <img src="assets/img/escena-catedral.svg" width="800" height="450" loading="lazy"
-                 alt="Ilustración de la Catedral en Ruinas bajo una luna pálida, con una gárgola sobre la torre">
+            <picture>
+              <source type="image/webp"
+                      srcset="assets/img/lugares/catedral-en-ruinas-400.webp 400w, assets/img/lugares/catedral-en-ruinas-800.webp 800w, assets/img/lugares/catedral-en-ruinas-1200.webp 1200w"
+                      sizes="(max-width: 640px) 100vw, (max-width: 1100px) 50vw, 380px">
+              <img src="assets/img/lugares/catedral-en-ruinas-800.jpg" width="800" height="450" loading="lazy" decoding="async"
+                   data-fallback="" data-fallback-src="assets/img/escena-catedral.svg"
+                   alt="Catedral en Ruinas bajo una luna pálida, con una gárgola sobre la torre">
+            </picture>
             <figcaption>
               <span class="shot__title">Nivel 1 · Catedral en Ruinas</span>
               <span class="shot__text">Un templo profanado donde empieza el descenso. Aquí aprendes a esquivar y a contraatacar.</span>
@@ -377,8 +466,14 @@
             </figcaption>
           </figure>
           <figure class="shot reveal">
-            <img src="assets/img/escena-ciudad.svg" width="800" height="450" loading="lazy"
-                 alt="Ilustración de la Ciudad bajo un cielo rojo, con la Muerte y su guadaña en la calle">
+            <picture>
+              <source type="image/webp"
+                      srcset="assets/img/lugares/ciudad-400.webp 400w, assets/img/lugares/ciudad-800.webp 800w, assets/img/lugares/ciudad-1200.webp 1200w"
+                      sizes="(max-width: 640px) 100vw, (max-width: 1100px) 50vw, 380px">
+              <img src="assets/img/lugares/ciudad-800.jpg" width="800" height="450" loading="lazy" decoding="async"
+                   data-fallback="" data-fallback-src="assets/img/escena-ciudad.svg"
+                   alt="La Ciudad bajo un cielo rojo, con la Muerte y su guadaña en la calle">
+            </picture>
             <figcaption>
               <span class="shot__title">Nivel 2 · Ciudad</span>
               <span class="shot__text">Calles oscuras bajo un cielo sangriento. La Muerte recorre cada esquina buscando venganza.</span>
@@ -386,8 +481,14 @@
             </figcaption>
           </figure>
           <figure class="shot reveal">
-            <img src="assets/img/escena-bosque.svg" width="800" height="450" loading="lazy"
-                 alt="Ilustración del Bosque de las Sombras con pinos oscuros, ojos rojos y la silueta del Minotauro">
+            <picture>
+              <source type="image/webp"
+                      srcset="assets/img/lugares/bosque-de-las-sombras-400.webp 400w, assets/img/lugares/bosque-de-las-sombras-800.webp 800w, assets/img/lugares/bosque-de-las-sombras-1200.webp 1200w"
+                      sizes="(max-width: 640px) 100vw, (max-width: 1100px) 50vw, 380px">
+              <img src="assets/img/lugares/bosque-de-las-sombras-800.jpg" width="800" height="450" loading="lazy" decoding="async"
+                   data-fallback="" data-fallback-src="assets/img/escena-bosque.svg"
+                   alt="Bosque de las Sombras con pinos oscuros, ojos rojos y la silueta del Minotauro">
+            </picture>
             <figcaption>
               <span class="shot__title">Nivel 3 · Bosque de las Sombras</span>
               <span class="shot__text">Niebla, pinos retorcidos y miradas rojas en la oscuridad. El doble salto será tu mejor aliado.</span>
@@ -395,7 +496,30 @@
             </figcaption>
           </figure>
         </div>
-        <p class="gallery__note">Ilustraciones conceptuales del juego. Las capturas de la versión final se agregarán aquí.</p>
+        <p class="gallery__note">Capturas e ilustraciones del juego en desarrollo.</p>
+      </div>
+    </section>
+
+    <!-- =================================================================
+         4D. GALERÍA (personajes y lugares reales)
+         Las tarjetas las genera JavaScript desde el arreglo GALERIA (app.js).
+         Las imágenes viven en assets/img/personajes/ y assets/img/lugares/.
+         ================================================================= -->
+    <section class="section" id="galeria" aria-labelledby="galeriaTitle">
+      <div class="container">
+        <header class="section__header reveal">
+          <p class="section__eyebrow">Galería</p>
+          <h2 class="section__title" id="galeriaTitle">Así se ve el descenso</h2>
+          <p class="section__lead">Personajes y lugares de HELLMED. Toca una imagen para verla en grande.</p>
+        </header>
+
+        <div class="gallery-filters reveal" role="group" aria-label="Filtrar galería">
+          <button type="button" class="chip-btn" data-gallery-filter="todos" aria-pressed="true">Todo</button>
+          <button type="button" class="chip-btn" data-gallery-filter="personajes" aria-pressed="false">✚ Personajes</button>
+          <button type="button" class="chip-btn" data-gallery-filter="lugares" aria-pressed="false">⛪ Lugares</button>
+        </div>
+
+        <div class="gallery-grid" id="galleryGrid"></div>
       </div>
     </section>
 
@@ -479,13 +603,8 @@
           </article>
           <article class="team-card reveal">
             <div class="team-card__avatar" aria-hidden="true">P</div>
-<<<<<<< HEAD
-            <h3 class="team-card__name">Pedro Vladimir Montes Montes<</h3>
-            <p class="team-card__role">Diseñador</p>
-=======
             <h3 class="team-card__name">Pedro Vladimir Montes Montes</h3>
-            <p class="team-card__role">Equipo de desarrollo</p>
->>>>>>> c000ba3fa0ea616f3869031af8b0be868b44dc68
+            <p class="team-card__role">Diseñador</p>
             <p class="team-card__text">Diseño y desarrollo del videojuego HELLMED: Pulse of the Damned.</p>
           </article>
           <article class="team-card reveal">
@@ -597,8 +716,26 @@
       </ul>
     </div>
     <!-- El año lo coloca JavaScript automáticamente -->
+    <p class="footer__legal">
+      <a href="legal/aviso-privacidad.html">Aviso de privacidad</a> ·
+      <a href="legal/terminos.html">Términos de uso</a>
+    </p>
     <p class="footer__copy">© <span id="year"></span> Equipo HELLMED · Tepic, Nayarit. Todos los derechos reservados.</p>
   </footer>
+
+  <!-- Visor de imágenes a pantalla completa (galería). <dialog> nativo: Esc lo cierra. -->
+  <dialog class="lightbox" id="lightbox" aria-label="Imagen ampliada">
+    <figure class="lightbox__figure">
+      <picture>
+        <source id="lightboxSource" type="image/webp" sizes="100vw">
+        <img id="lightboxImg" alt="" decoding="async">
+      </picture>
+      <figcaption id="lightboxCaption"></figcaption>
+    </figure>
+    <button class="lightbox__btn lightbox__btn--prev" id="lightboxPrev" type="button" aria-label="Anterior">‹</button>
+    <button class="lightbox__btn lightbox__btn--next" id="lightboxNext" type="button" aria-label="Siguiente">›</button>
+    <button class="lightbox__btn lightbox__btn--close" id="lightboxClose" type="button" aria-label="Cerrar">✕</button>
+  </dialog>
 
   <!-- =================================================================
        8. MODAL DE AUTENTICACIÓN (Login / Registro)
@@ -615,7 +752,7 @@
       <button class="modal__close" type="button" data-close-modal aria-label="Cerrar ventana">✕</button>
 
       <h2 class="modal__title" id="authTitle">Únete a la resistencia</h2>
-      <p class="modal__note">El registro es <strong>opcional</strong>. Con una cuenta podrás sincronizar tu progreso con HellMed Hub (próximamente).</p>
+      <p class="modal__note">El registro es <strong>opcional</strong>. La misma cuenta sirve aquí y en la app <strong>HellMed Hub</strong>.</p>
 
       <!-- Pestañas para cambiar entre formularios -->
       <div class="auth-tabs" role="tablist" aria-label="Tipo de acceso">
@@ -649,7 +786,7 @@
         </div>
 
         <label class="checkbox">
-          <input type="checkbox" name="remember"> Recordarme
+          <input type="checkbox" name="remember" checked> Recordarme
         </label>
 
         <button class="btn btn--ghost btn--sm" type="button" id="forgotPassword">¿Olvidaste tu contraseña?</button>
@@ -702,8 +839,8 @@
         <div class="field">
           <label class="checkbox">
             <input type="checkbox" id="regTerms" name="terms" data-rules="checked" aria-describedby="regTerms-error">
-            Acepto los términos y el aviso de privacidad
-            <!-- AGREGAR AQUÍ EL LINK A TU AVISO DE PRIVACIDAD cuando exista -->
+            <span>He leído y acepto el <a href="legal/aviso-privacidad.html" target="_blank" rel="noopener">Aviso de privacidad</a>
+            y los <a href="legal/terminos.html" target="_blank" rel="noopener">Términos de uso</a></span>
           </label>
           <p class="field__error" id="regTerms-error"></p>
         </div>
@@ -719,4 +856,4 @@
   <!-- Aviso que aparece solo cuando el dispositivo no tiene internet -->
   <div class="offline-banner" id="offlineBanner" role="status" hidden>Sin conexión · Puedes seguir viendo el sitio; el inicio de sesión necesita internet.</div>
 </body>
-</html>
+</html>

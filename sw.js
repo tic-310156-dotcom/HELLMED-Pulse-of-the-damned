@@ -9,7 +9,7 @@
    SUBE el número de VERSION (v1 → v2 → v3...). Así el navegador borra
    la caché vieja y descarga los archivos nuevos.
    ===================================================================== */
-const VERSION = 'v7';
+const VERSION = 'v8'; // v8: imágenes reales, aviso de privacidad, sesión compartida
 const CACHE = `hellmed-${VERSION}`;
 
 // Archivos esenciales que se guardan al instalar (rutas relativas: sirve en GitHub Pages)
@@ -17,6 +17,9 @@ const PRECACHE = [
   './',
   'index.html',
   'reset.html',
+  'supabase-client.js',
+  'legal/aviso-privacidad.html',
+  'legal/terminos.html',
   'style.css',
   'extras.css',
   'app.js',
