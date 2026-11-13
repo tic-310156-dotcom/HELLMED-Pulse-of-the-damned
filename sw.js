@@ -9,11 +9,7 @@
    SUBE el número de VERSION (v1 → v2 → v3...). Así el navegador borra
    la caché vieja y descarga los archivos nuevos.
    ===================================================================== */
-<<<<<<< HEAD
-const VERSION = 'v12-descarga-pc'; // v10: traducción ES/EN y fotos del equipo
-=======
-const VERSION = 'v11'; // v10: traducción ES/EN y fotos del equipo
->>>>>>> e2688fab5de5d14a86170e55976279fea1bdfa03
+const VERSION = 'v12-descarga-pc'; // v12: botón de descarga del juego de PC
 const CACHE = `hellmed-${VERSION}`;
 
 // Archivos esenciales que se guardan al instalar (rutas relativas: sirve en GitHub Pages)
