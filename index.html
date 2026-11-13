@@ -63,6 +63,8 @@
   <!-- Configuración compartida de Supabase + sesión persistente (antes de app.js) -->
   <script src="supabase-client.js" defer></script>
   <script src="app.js" defer></script>
+  <!-- Traducción Español / Inglés (después de app.js) -->
+  <script src="i18n.js" defer></script>
 </head>
 
 <body>
@@ -97,9 +99,15 @@
 
       <!-- Acciones de la derecha: tema, login y botón hamburguesa -->
       <div class="navbar__actions">
+        <!-- Botón de idioma ES / EN (lo controla i18n.js). Muestra el idioma al que cambias. -->
+        <button class="btn-icon lang-toggle" id="langToggle" type="button" aria-label="Switch to English" title="English" data-no-i18n>
+          <svg class="icon" aria-hidden="true"><use href="assets/img/iconos/iconos.svg#idioma"></use></svg>
+          <span class="lang-toggle__label">EN</span>
+        </button>
+
         <!-- Botón de Dark/Light mode. El icono lo cambia JavaScript -->
         <button class="btn-icon" id="themeToggle" type="button" aria-label="Cambiar a modo claro" title="Cambiar tema">
-          <span class="theme-icon" aria-hidden="true">☀</span>
+          <span class="theme-icon" aria-hidden="true"><svg class="icon" aria-hidden="true"><use href="assets/img/iconos/iconos.svg#sol"></use></svg></span>
         </button>
 
         <!-- Abre el modal de autenticación -->
@@ -173,16 +181,15 @@
 
         <!-- Botones de acción principal (CTA = Call To Action) -->
         <div class="hero__cta">
-          <!-- AGREGAR AQUÍ EL LINK DE DESCARGA DE TU JUEGO (página de Steam).
-               Reemplaza href="#" por el enlace real y BORRA el atributo data-placeholder-link -->
-          <a href="#" class="btn btn--primary btn--lg" data-placeholder-link>
-            <span aria-hidden="true">⬇</span> Descargar juego · PC
+          <!-- El juego de PC aún no tiene tienda: lleva a la sección de descargas.
+               Cuando haya link de Steam/itch.io, cambia href="#descargar" por ese link. -->
+          <a href="#descargar" class="btn btn--primary btn--lg">
+            <svg class="icon" aria-hidden="true"><use href="assets/img/iconos/iconos.svg#descargar"></use></svg> Descargar juego · PC
           </a>
 
-          <!-- AGREGAR AQUÍ EL LINK DE DESCARGA DE TU APP MÓVIL (Google Play de HellMed Hub).
-               Reemplaza href="#" por el enlace real y BORRA el atributo data-placeholder-link -->
-          <a href="#" class="btn btn--ghost btn--lg" data-placeholder-link>
-            <span aria-hidden="true">📱</span> App móvil · HellMed Hub
+          <!-- App móvil: descarga directa del APK (archivo en downloads/) -->
+          <a href="downloads/hellmed-hub.apk" class="btn btn--ghost btn--lg" download>
+            <svg class="icon" aria-hidden="true"><use href="assets/img/iconos/iconos.svg#celular"></use></svg> App móvil · HellMed Hub
           </a>
         </div>
 
@@ -222,22 +229,22 @@
         <!-- Rejilla de 4 características (los diferenciadores del modelo de negocio) -->
         <div class="features">
           <article class="feature reveal">
-            <span class="feature__icon" aria-hidden="true">✚</span>
+            <span class="feature__icon feature__icon--img" aria-hidden="true"><img src="assets/img/iconos/icono-medico.webp" width="52" height="52" alt="" loading="lazy" decoding="async"></span>
             <h3 class="feature__title">Un héroe que salva vidas</h3>
             <p class="feature__text">Combates con la Cruz Consagrada y te curas con un botiquín de primeros auxilios. La medicina es parte de la jugabilidad.</p>
           </article>
           <article class="feature reveal">
-            <span class="feature__icon" aria-hidden="true">👻</span>
+            <span class="feature__icon feature__icon--img" aria-hidden="true"><img src="assets/img/iconos/icono-phantom.webp" width="52" height="52" alt="" loading="lazy" decoding="async"></span>
             <h3 class="feature__title">Phantom, tu guía</h3>
             <p class="feature__text">Te advierte de trampas, ataca a tu lado y te revive una vez por nivel. Accesible para nuevos, retador para veteranos.</p>
           </article>
           <article class="feature reveal">
-            <span class="feature__icon" aria-hidden="true">📱</span>
+            <span class="feature__icon feature__icon--img" aria-hidden="true"><img src="assets/img/iconos/icono-app.webp" width="52" height="52" alt="" loading="lazy" decoding="async"></span>
             <h3 class="feature__title">Ecosistema PC + móvil</h3>
             <p class="feature__text">Con HellMed Hub revisas tu progreso, personalizas skins, compras DLCs y hablas con la comunidad desde el celular.</p>
           </article>
           <article class="feature reveal">
-            <span class="feature__icon" aria-hidden="true">💻</span><!--==U+1f4bb CODE DE LA LAP==-->
+            <span class="feature__icon" aria-hidden="true"><svg class="icon" aria-hidden="true"><use href="assets/img/iconos/iconos.svg#laptop"></use></svg></span>
             <h3 class="feature__title">Corre en tu PC</h3>
             <p class="feature__text">Funciona con 8 GB de RAM y gráficos integrados. Precio regional en pesos y hecho en español desde el inicio.</p>
           </article>
@@ -266,11 +273,11 @@
         <div class="tabs reveal" role="tablist" aria-label="Facciones">
           <button class="tab is-active" type="button" role="tab" id="tab-heroes"
                   aria-selected="true" aria-controls="roster" data-faction="heroes">
-            ✚ Héroes <!--==U+271a CODE DE LA CRUZ==-->
+            <svg class="icon" aria-hidden="true"><use href="assets/img/iconos/iconos.svg#cruz"></use></svg> Héroes
           </button>
           <button class="tab" type="button" role="tab" id="tab-enemigos"
                   aria-selected="false" aria-controls="roster" data-faction="enemigos" tabindex="-1">
-            ☠ Enemigos <!--==U+2620 CODE DE LA CALAVERA==-->
+            <svg class="icon" aria-hidden="true"><use href="assets/img/iconos/iconos.svg#calavera"></use></svg> Enemigos
           </button>
         </div>
 
@@ -364,35 +371,35 @@
 
     <!-- =================================================================
          4B. CÓMO JUGAR (objetivo, forma de jugar y controles)
-         NOTA PARA EL EQUIPO: los controles son una PROPUESTA. Confírmenlos
-         con la build real del juego y ajusten las teclas si son distintas.
+         Los controles son los de la build real (pantalla CONTROLES del juego).
+         Si cambian en GDevelop, actualícenlos aquí.
          ================================================================= -->
     <section class="section" id="jugar" aria-labelledby="jugarTitle">
       <div class="container">
         <header class="section__header reveal">
           <p class="section__eyebrow">Cómo jugar</p>
           <h2 class="section__title" id="jugarTitle">Explora, combate y cura</h2>
-          <p class="section__lead">Aprende lo básico en un minuto: cuatro ideas y los controles para PC.</p>
+          <p class="section__lead">Aprende lo básico en un minuto: cuatro ideas y los controles del juego.</p>
         </header>
 
         <div class="features">
           <article class="feature reveal">
-            <span class="feature__icon" aria-hidden="true">🧭</span>
+            <span class="feature__icon feature__icon--img" aria-hidden="true"><img src="assets/img/iconos/icono-brujula.webp" width="52" height="52" alt="" loading="lazy" decoding="async"></span>
             <h3 class="feature__title">1. Explora y avanza</h3>
             <p class="feature__text">Recorre cada nivel de izquierda a derecha, esquiva trampas y busca el camino hacia el jefe del escenario.</p>
           </article>
           <article class="feature reveal">
-            <span class="feature__icon" aria-hidden="true">✝</span>
+            <span class="feature__icon feature__icon--img" aria-hidden="true"><img src="assets/img/iconos/icono-cruz.webp" width="52" height="52" alt="" loading="lazy" decoding="async"></span>
             <h3 class="feature__title">2. Combate con la Cruz</h3>
             <p class="feature__text">Ataca con la Cruz Consagrada, usa el Cántico Sagrado y la Lanza de Luz. Esquiva y contraataca.</p>
           </article>
           <article class="feature reveal">
-            <span class="feature__icon" aria-hidden="true">✚</span>
+            <span class="feature__icon feature__icon--img" aria-hidden="true"><img src="assets/img/iconos/icono-botiquin.webp" width="52" height="52" alt="" loading="lazy" decoding="async"></span>
             <h3 class="feature__title">3. Cúrate a tiempo</h3>
             <p class="feature__text">Usa tu botiquín de primeros auxilios para recuperar vida. La medicina es parte de la jugabilidad.</p>
           </article>
           <article class="feature reveal">
-            <span class="feature__icon" aria-hidden="true">👻</span>
+            <span class="feature__icon feature__icon--img" aria-hidden="true"><img src="assets/img/iconos/icono-revivir.webp" width="52" height="52" alt="" loading="lazy" decoding="async"></span>
             <h3 class="feature__title">4. Confía en Phantom</h3>
             <p class="feature__text">Te avisa de los peligros, te da pistas y te revive una vez por nivel. Úsalo bien.</p>
           </article>
@@ -405,13 +412,15 @@
               <span class="spec-card__badge">PC · principal</span>
             </header>
             <dl class="spec-list">
-              <div class="spec-list__row"><dt>Moverse</dt><dd><kbd>A</kbd> <kbd>D</kbd> o <kbd>←</kbd> <kbd>→</kbd></dd></div>
-              <div class="spec-list__row"><dt>Saltar / doble salto</dt><dd><kbd>Espacio</kbd> (púlsalo dos veces)</dd></div>
-              <div class="spec-list__row"><dt>Cruz Consagrada (atacar)</dt><dd><kbd>J</kbd></dd></div>
-              <div class="spec-list__row"><dt>Botiquín (curarte)</dt><dd><kbd>K</kbd></dd></div>
+              <!-- Controles REALES del juego (pantalla "CONTROLES" de la build en GDevelop) -->
+              <div class="spec-list__row"><dt>Moverse</dt><dd><kbd>A</kbd> <kbd>D</kbd></dd></div>
+              <div class="spec-list__row"><dt>Saltar / doble salto</dt><dd><kbd>J</kbd> (púlsalo dos veces)</dd></div>
+              <div class="spec-list__row"><dt>Atacar con la Cruz</dt><dd><kbd>K</kbd></dd></div>
               <div class="spec-list__row"><dt>Cántico Sagrado</dt><dd><kbd>L</kbd></dd></div>
-              <div class="spec-list__row"><dt>Lanza de Luz</dt><dd><kbd>U</kbd></dd></div>
-              <div class="spec-list__row"><dt>Pausa</dt><dd><kbd>Esc</kbd></dd></div>
+              <div class="spec-list__row"><dt>Dash</dt><dd><kbd>O</kbd></dd></div>
+              <div class="spec-list__row"><dt>Usar botiquín</dt><dd><kbd>H</kbd></dd></div>
+              <div class="spec-list__row"><dt>Puertas / curar / cofres / altar</dt><dd><kbd>W</kbd></dd></div>
+              <div class="spec-list__row"><dt>Pausa</dt><dd><kbd>P</kbd> o <kbd>Esc</kbd></dd></div>
             </dl>
           </article>
 
@@ -421,12 +430,13 @@
               <span class="spec-card__badge">Opcional</span>
             </header>
             <dl class="spec-list">
-              <div class="spec-list__row"><dt>Moverse</dt><dd>Stick izquierdo</dd></div>
+              <div class="spec-list__row"><dt>Moverse</dt><dd>Cruceta o stick</dd></div>
               <div class="spec-list__row"><dt>Saltar / doble salto</dt><dd>Botón <kbd>A</kbd></dd></div>
-              <div class="spec-list__row"><dt>Cruz Consagrada (atacar)</dt><dd>Botón <kbd>X</kbd></dd></div>
-              <div class="spec-list__row"><dt>Botiquín (curarte)</dt><dd>Botón <kbd>Y</kbd></dd></div>
-              <div class="spec-list__row"><dt>Cántico Sagrado</dt><dd>Botón <kbd>B</kbd></dd></div>
-              <div class="spec-list__row"><dt>Lanza de Luz</dt><dd><kbd>RT</kbd></dd></div>
+              <div class="spec-list__row"><dt>Atacar con la Cruz</dt><dd>Botón <kbd>X</kbd></dd></div>
+              <div class="spec-list__row"><dt>Cántico Sagrado</dt><dd>Botón <kbd>Y</kbd></dd></div>
+              <div class="spec-list__row"><dt>Dash</dt><dd>Botón <kbd>B</kbd></dd></div>
+              <div class="spec-list__row"><dt>Usar botiquín</dt><dd><kbd>RB</kbd> / <kbd>LB</kbd></dd></div>
+              <div class="spec-list__row"><dt>Puertas / curar / cofres / altar</dt><dd>Arriba</dd></div>
               <div class="spec-list__row"><dt>Pausa</dt><dd><kbd>Start</kbd></dd></div>
             </dl>
           </article>
@@ -515,8 +525,8 @@
 
         <div class="gallery-filters reveal" role="group" aria-label="Filtrar galería">
           <button type="button" class="chip-btn" data-gallery-filter="todos" aria-pressed="true">Todo</button>
-          <button type="button" class="chip-btn" data-gallery-filter="personajes" aria-pressed="false">✚ Personajes</button>
-          <button type="button" class="chip-btn" data-gallery-filter="lugares" aria-pressed="false">⛪ Lugares</button>
+          <button type="button" class="chip-btn" data-gallery-filter="personajes" aria-pressed="false"><svg class="icon" aria-hidden="true"><use href="assets/img/iconos/iconos.svg#cruz"></use></svg> Personajes</button>
+          <button type="button" class="chip-btn" data-gallery-filter="lugares" aria-pressed="false"><svg class="icon" aria-hidden="true"><use href="assets/img/iconos/iconos.svg#iglesia"></use></svg> Lugares</button>
         </div>
 
         <div class="gallery-grid" id="galleryGrid"></div>
@@ -574,36 +584,45 @@
       </div>
     </section>
 
-            <div class="team">
-          <!-- Fotos en assets/img/equipo/. Si una foto no existe, se muestra la inicial. -->
+    <!-- =================================================================
+         5B. EQUIPO (integrantes y participación)
+         AGREGAR AQUÍ: cambia "Integrante 2..5" por los nombres reales y
+         escribe el rol y la participación de cada uno.
+         ================================================================= -->
+    <section class="section section--alt" id="equipo" aria-labelledby="equipoTitle">
+      <div class="container">
+        <header class="section__header reveal">
+          <p class="section__eyebrow">Equipo HELLMED</p>
+          <h2 class="section__title" id="equipoTitle">Quiénes hacemos HELLMED</h2>
+          <p class="section__lead">Estudiantes de la UTNay, Tepic, Nayarit, trabajando juntos en el juego y su ecosistema.</p>
+        </header>
+
+        <div class="team">
           <article class="team-card reveal">
             <div class="team-card__avatar">M<img src="assets/img/equipo/mauricio.jpg" alt="Foto de Mauricio" width="160" height="160" loading="lazy" decoding="async" onerror="this.remove()"></div>
-            <h3 class="team-card__name">Raul Mauricio Velasco</h3>
+            <h3 class="team-card__name">Mauricio</h3>
             <p class="team-card__role">Desarrollo web</p>
-            <p class="team-card__text">Sitio web oficial.</p>
+            <p class="team-card__text">Sitio web oficial, inicio de sesión y registro con Supabase, y la implementación de la PWA.</p>
           </article>
-
+          
           <article class="team-card reveal">
             <div class="team-card__avatar">R<img src="assets/img/equipo/rafael.jpg" alt="Foto de Rafael Humberto Ávila Ríos" width="160" height="160" loading="lazy" decoding="async" onerror="this.remove()"></div>
             <h3 class="team-card__name">Rafael Humberto Ávila Ríos</h3>
             <p class="team-card__role">Equipo de desarrollo</p>
             <p class="team-card__text">Diseño y desarrollo del videojuego HELLMED: Pulse of the Damned.</p>
           </article>
-
           <article class="team-card reveal">
             <div class="team-card__avatar">P<img src="assets/img/equipo/pedro.jpg" alt="Foto de Pedro Vladimir Montes Montes" width="160" height="160" loading="lazy" decoding="async" onerror="this.remove()"></div>
             <h3 class="team-card__name">Pedro Vladimir Montes Montes</h3>
             <p class="team-card__role">Diseñador</p>
             <p class="team-card__text">Diseño y desarrollo del videojuego HELLMED: Pulse of the Damned.</p>
           </article>
-
           <article class="team-card reveal">
             <div class="team-card__avatar">A<img src="assets/img/equipo/antonio.jpg" alt="Foto de Antonio Damián Navarro López" width="160" height="160" loading="lazy" decoding="async" onerror="this.remove()"></div>
             <h3 class="team-card__name">Antonio Damián Navarro López</h3>
             <p class="team-card__role">Equipo de desarrollo</p>
             <p class="team-card__text">Diseño y desarrollo del videojuego HELLMED: Pulse of the Damned.</p>
           </article>
-
           <article class="team-card reveal">
             <div class="team-card__avatar">J<img src="assets/img/equipo/jesus.jpg" alt="Foto de Jesús Emmanuel Rodríguez de la Cruz" width="160" height="160" loading="lazy" decoding="async" onerror="this.remove()"></div>
             <h3 class="team-card__name">Jesús Emmanuel Rodríguez de la Cruz</h3>
@@ -611,6 +630,9 @@
             <p class="team-card__text">Desarrollo de la aplicación móvil HellMed Hub.</p>
           </article>
         </div>
+      </div>
+    </section>
+
     <!-- =================================================================
          6. DESCARGAS (juego para PC + app móvil)
          ================================================================= -->
@@ -632,12 +654,13 @@
             </p>
             <p class="download-card__price">~$0000  <small>precio regional</small></p>
             <div class="download-card__actions">
-              <!-- AGREGAR AQUÍ EL LINK DE DESCARGA DEl VIDEOJUEGO OJO GENTE (página de Steam).
-                   Borrar data-placeholder-link SE VALLA A PONER EL LINK -->
-              <a href="#" class="btn btn--primary" data-placeholder-link>Comprar en Steam</a>
+              <!-- Sin link todavía: se muestra como "Próximamente" y NO es enlace,
+                   así no cuenta como enlace roto. Cuando exista la página de Steam,
+                   cámbialo por: <a href="https://store.steampowered.com/..." class="btn btn--primary" target="_blank" rel="noopener">Comprar en Steam</a> -->
+              <span class="btn btn--primary is-disabled" aria-disabled="true">Steam · Próximamente</span>
 
-              <!-- AGREGAR AQUÍ EL LINK DE LA DEMO GRATUITA (página de itch.io) -->
-              <a href="#" class="btn btn--outline" data-placeholder-link>Demo gratis en itch.io</a>
+              <!-- Igual para la demo en itch.io -->
+              <span class="btn btn--outline is-disabled" aria-disabled="true">Demo en itch.io · Próximamente</span>
             </div>
             <!-- Las consolas están planeadas "a futuro" en el modelo de negocio.
                  Cuando exista esa versión, agrega aquí otro botón. -->
@@ -654,16 +677,13 @@
             </p>
             <p class="download-card__price">Gratis <small>con compras opcionales</small></p>
             <div class="download-card__actions">
-              <!-- AGREGAR AQUÍ EL LINK DE GOOGLE PLAY. Borrar data-placeholder-link cuando se ponga el enlace real -->
-              <a href="#" class="btn btn--accent" data-placeholder-link>Disponible en Google Play</a>
+              <!-- APK real (sube el archivo como downloads/hellmed-hub.apk) -->
+              <a href="downloads/hellmed-hub.apk" class="btn btn--primary" download>Descargar APK (Android)</a>
 
-              <!-- APK: cuando exista downloads/hellmed-hub.apk, quita el atributo "hidden" -->
-              <a href="downloads/hellmed-hub.apk" class="btn btn--primary" download hidden>Descargar APK (Android)</a>
-
-              <!-- AGREGAR AQUÍ EL LINK DE TU SERVIDOR DE DISCORD -->
-              <a href="#" class="btn btn--outline" data-placeholder-link>Únete al Discord</a>
+              <!-- Google Play: todavía no está publicada -->
+              <span class="btn btn--accent is-disabled" aria-disabled="true">Google Play · Próximamente</span>
             </div>
-            <p class="download-card__note">App móvil independiente para Android. Próximamente.</p>
+            <p class="download-card__note">Para Android 8.0 o superior. Al instalar, permite "instalar apps de origen desconocido".</p>
           </article>
 
           <!-- Tarjeta de la página instalable (PWA) -->
@@ -695,12 +715,10 @@
         <p class="footer__text">Proyecto desarrollado por estudiantes de Ingeniería en Desarrollo y Gestión de Software, Universidad Tecnológica de Nayarit.</p>
       </div>
 
-      <!-- AGREGAR AQUÍ LOS LINKS DE REDES SOCIALES (TikTok, Instagram, YouTube) SI ES QUE TENEMOS JAJAJA -->
+      <!-- Redes sociales reales (se abren en otra pestaña) -->
       <ul class="footer__social" aria-label="Redes sociales">
-        <li><a href="www.tiktok.com/@hellmed1" data-placeholder-link>TikTok</a></li>
-        <li><a href="https://www.instagram.com/hellmed.juego/" data-placeholder-link>Instagram</a></li>
-        <li><a href="#" data-placeholder-link>YouTube</a></li>
-        <li><a href="#" data-placeholder-link>Discord</a></li>
+        <li><a href="https://www.tiktok.com/@hellmed1" target="_blank" rel="noopener">TikTok</a></li>
+        <li><a href="https://www.instagram.com/hellmed.juego/" target="_blank" rel="noopener">Instagram</a></li>
       </ul>
     </div>
     <!-- El año lo coloca JavaScript automáticamente -->
@@ -722,7 +740,7 @@
     </figure>
     <button class="lightbox__btn lightbox__btn--prev" id="lightboxPrev" type="button" aria-label="Anterior">‹</button>
     <button class="lightbox__btn lightbox__btn--next" id="lightboxNext" type="button" aria-label="Siguiente">›</button>
-    <button class="lightbox__btn lightbox__btn--close" id="lightboxClose" type="button" aria-label="Cerrar">✕</button>
+    <button class="lightbox__btn lightbox__btn--close" id="lightboxClose" type="button" aria-label="Cerrar"><svg class="icon" aria-hidden="true"><use href="assets/img/iconos/iconos.svg#cerrar"></use></svg></button>
   </dialog>
 
   <!-- =================================================================
@@ -737,7 +755,7 @@
     <div class="modal__overlay" data-close-modal></div>
 
     <div class="modal__box">
-      <button class="modal__close" type="button" data-close-modal aria-label="Cerrar ventana">✕</button>
+      <button class="modal__close" type="button" data-close-modal aria-label="Cerrar ventana"><svg class="icon" aria-hidden="true"><use href="assets/img/iconos/iconos.svg#cerrar"></use></svg></button>
 
       <h2 class="modal__title" id="authTitle">Únete a la resistencia</h2>
       <p class="modal__note">El registro es <strong>opcional</strong>. La misma cuenta sirve aquí y en la app <strong>HellMed Hub</strong>.</p>
@@ -768,7 +786,7 @@
                    required data-rules="required" aria-describedby="loginPassword-error">
             <!-- Botón para mostrar/ocultar contraseña 
              PARA LOS PUNTOS RESALTADOS DE LA CONTRASEÑA CODE U+2022-->
-            <button class="field__toggle" type="button" data-toggle-password="loginPassword" aria-label="Mostrar contraseña">👁</button>
+            <button class="field__toggle" type="button" data-toggle-password="loginPassword" aria-label="Mostrar contraseña"><svg class="icon" aria-hidden="true"><use href="assets/img/iconos/iconos.svg#ojo"></use></svg></button>
           </div>
           <p class="field__error" id="loginPassword-error"></p>
         </div>
@@ -806,7 +824,7 @@
             <input class="field__input" type="password" id="regPassword" name="password"
                    placeholder="Mínimo 8 caracteres" autocomplete="new-password"
                    required data-rules="required|password" aria-describedby="regPassword-error">
-            <button class="field__toggle" type="button" data-toggle-password="regPassword" aria-label="Mostrar contraseña">👁</button>
+            <button class="field__toggle" type="button" data-toggle-password="regPassword" aria-label="Mostrar contraseña"><svg class="icon" aria-hidden="true"><use href="assets/img/iconos/iconos.svg#ojo"></use></svg></button>
           </div>
           <!-- Barra de fuerza de contraseña (la actualiza JS mientras escribes) -->
           <div class="strength" aria-hidden="true"><span class="strength__bar" id="strengthBar"></span></div>
@@ -819,7 +837,7 @@
           <input class="field__input" type="password" id="regConfirm" name="confirm"
                  placeholder="Repite tu contraseña" autocomplete="new-password"
                  required data-rules="required|match:regPassword" aria-describedby="regConfirm-error">
-          <button class="field__toggle" type="button" data-toggle-password="regConfirm" aria-label="Mostrar contraseña">👁</button>
+          <button class="field__toggle" type="button" data-toggle-password="regConfirm" aria-label="Mostrar contraseña"><svg class="icon" aria-hidden="true"><use href="assets/img/iconos/iconos.svg#ojo"></use></svg></button>
           </div>
           <p class="field__error" id="regConfirm-error"></p>
         </div>

@@ -165,7 +165,8 @@
     // Actualizamos el icono y el texto accesible del botón
     const button = $('#themeToggle');
     const isDark = theme === 'dark';
-    $('.theme-icon', button).textContent = isDark ? '☀' : '☾';
+    // Icono SVG (assets/img/iconos/iconos.svg): sol en tema oscuro, luna en tema claro
+    $('.theme-icon use', button).setAttribute('href', `assets/img/iconos/iconos.svg#${isDark ? 'sol' : 'luna'}`);
     button.setAttribute('aria-label', isDark ? 'Cambiar a modo claro' : 'Cambiar a modo oscuro');
 
     // Color de la barra del navegador en celular
@@ -637,7 +638,7 @@
       if (!currentUser) openModal('login'); // con sesión iniciada, el botón sirve para salir
     });
 
-    // Cualquier elemento con data-close-modal (fondo y botón ✕) cierra el modal
+    // Cualquier elemento con data-close-modal (fondo y botón de cerrar) cierra el modal
     $$('[data-close-modal]', modal.el).forEach((el) => el.addEventListener('click', closeModal));
 
     // Tecla Escape cierra; Tab queda atrapado dentro
@@ -658,7 +659,7 @@
         const show = input.type === 'password';
         input.type = show ? 'text' : 'password';
         btn.setAttribute('aria-label', show ? 'Ocultar contraseña' : 'Mostrar contraseña');
-        btn.textContent = show ? '🙈' : '👁';
+        btn.querySelector('use').setAttribute('href', `assets/img/iconos/iconos.svg#${show ? 'ojo-cerrado' : 'ojo'}`);
       });
     });
   }

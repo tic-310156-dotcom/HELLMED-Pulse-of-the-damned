@@ -9,7 +9,7 @@
    SUBE el número de VERSION (v1 → v2 → v3...). Así el navegador borra
    la caché vieja y descarga los archivos nuevos.
    ===================================================================== */
-const VERSION = 'v8'; // v8: imágenes reales, aviso de privacidad, sesión compartida
+const VERSION = 'v10'; // v10: traducción ES/EN y fotos del equipo
 const CACHE = `hellmed-${VERSION}`;
 
 // Archivos esenciales que se guardan al instalar (rutas relativas: sirve en GitHub Pages)
@@ -18,6 +18,7 @@ const PRECACHE = [
   'index.html',
   'reset.html',
   'supabase-client.js',
+  'i18n.js',
   'legal/aviso-privacidad.html',
   'legal/terminos.html',
   'style.css',
@@ -31,7 +32,16 @@ const PRECACHE = [
   'icons/apple-touch-icon.png',
   'assets/img/escena-catedral.svg',
   'assets/img/escena-ciudad.svg',
-  'assets/img/escena-bosque.svg'
+  'assets/img/escena-bosque.svg',
+  // Iconos (antes eran emojis)
+  'assets/img/iconos/iconos.svg',
+  ...['mauricio', 'rafael', 'pedro', 'antonio', 'jesus'].map((n) => `assets/img/equipo/${n}.jpg`),
+  ...['medico', 'phantom', 'app', 'brujula', 'cruz', 'botiquin', 'revivir'].map((n) => `assets/img/iconos/icono-${n}.webp`),
+  // Imágenes de personajes y lugares (para verlas sin conexión)
+  ...['hermano-cruz', 'hermano-cruz-sacerdote', 'phantom', 'gargola', 'muerte', 'minotauro']
+      .flatMap((n) => [`assets/img/personajes/${n}-400.webp`, `assets/img/personajes/${n}-800.webp`]),
+  ...['catedral-en-ruinas', 'ciudad', 'bosque-de-las-sombras', 'infierno', 'mapa-del-mundo']
+      .flatMap((n) => [`assets/img/lugares/${n}-400.webp`, `assets/img/lugares/${n}-800.webp`])
 ];
 
 /* 1) INSTALL: se ejecuta una vez; descarga y guarda los archivos esenciales */

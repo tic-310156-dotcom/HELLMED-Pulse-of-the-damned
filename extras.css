@@ -169,3 +169,67 @@ picture { display: contents; }
   .shot img, .gallery-item img { transition: none; }
   .shot:hover img, .gallery-item__open:hover img { transform: none; }
 }
+
+/* Botones "Próximamente": se ven como botón pero no son enlace */
+.btn.is-disabled { opacity: 0.45; cursor: not-allowed; pointer-events: none; filter: grayscale(0.4); }
+
+/* =====================================================================
+   ICONOS (reemplazan a los emojis)
+   - .icon  → iconos SVG de la interfaz (assets/img/iconos/iconos.svg)
+   - .feature__icon--img → arte real del juego en las tarjetas
+   ===================================================================== */
+.icon { width: 1.15em; height: 1.15em; flex-shrink: 0; vertical-align: -0.2em; }
+.btn .icon, .tab .icon, .chip-btn .icon { margin-right: 0.35em; }
+.theme-icon .icon, .field__toggle .icon, .modal__close .icon, .lightbox__btn .icon { width: 20px; height: 20px; margin: 0; vertical-align: middle; }
+.feature__icon .icon { width: 26px; height: 26px; margin: 0; color: var(--color-primary); }
+.feature__icon--img { overflow: hidden; padding: 0; border: 1px solid var(--color-border); }
+.feature__icon--img img { width: 100%; height: 100%; object-fit: cover; display: block; image-rendering: pixelated; }
+.tab .icon, .chip-btn .icon { width: 1em; height: 1em; }
+.tab, .chip-btn { display: inline-flex; align-items: center; justify-content: center; gap: 0.45em; }
+.tab .icon, .chip-btn .icon { margin-right: 0; }
+.feature__icon--img { width: 64px; height: 64px; }
+
+/* ---- Fotos del equipo ---- */
+.team-card__avatar {
+  position: relative; overflow: hidden;
+  width: 96px; height: 96px;
+  border: 3px solid var(--color-primary);
+}
+.team-card__avatar img {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  object-fit: cover;
+  object-position: center 20%;
+}
+
+/* ---- Botón de idioma ES / EN (i18n.js) ---- */
+.lang-toggle {
+  width: auto; padding: 0 0.7rem; gap: 0.35rem;
+  display: inline-flex; align-items: center; border-radius: 999px;
+  font: 700 0.8rem var(--font-heading); letter-spacing: 0.08em;
+}
+.lang-toggle:hover { transform: none; background: var(--color-surface-2); }
+.lang-toggle .icon { width: 17px; height: 17px; margin: 0; }
+@media (max-width: 600px) { .lang-toggle { padding: 0 0.5rem; } .lang-toggle .icon { display: none; } }
+/* Con 8 enlaces + idioma + tema + sesión, el menú necesita ser compacto */
+#openAuth { white-space: nowrap; }
+@media (min-width: 1181px) {
+  .navbar__links { gap: 1.1rem; }
+  .navbar__link { letter-spacing: 0.07em; font-size: 0.88rem; }
+  .navbar__container { gap: 1rem; }
+}
+/* Entre 901 y 1180 px ya no cabe: se usa el menú hamburguesa
+   (mismas reglas que style.css usa en ≤900 px) */
+@media (max-width: 1180px) {
+  .navbar__menu {
+    position: fixed; top: var(--nav-height); left: 0; right: 0;
+    padding: 1.5rem 1.25rem 2rem;
+    background: var(--color-bg); color: var(--color-text);
+    border-bottom: 1px solid var(--color-border);
+    transform: translateY(-120%); transition: transform 0.35s ease;
+  }
+  .navbar__menu.is-open { transform: translateY(0); }
+  .navbar__links { flex-direction: column; gap: 1.25rem; }
+  .navbar__burger { display: flex; }
+  .navbar.menu-open { background: var(--color-bg); color: var(--color-text); }
+}
