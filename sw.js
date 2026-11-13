@@ -9,7 +9,11 @@
    SUBE el número de VERSION (v1 → v2 → v3...). Así el navegador borra
    la caché vieja y descarga los archivos nuevos.
    ===================================================================== */
+<<<<<<< HEAD
+const VERSION = 'v12-descarga-pc'; // v10: traducción ES/EN y fotos del equipo
+=======
 const VERSION = 'v11'; // v10: traducción ES/EN y fotos del equipo
+>>>>>>> e2688fab5de5d14a86170e55976279fea1bdfa03
 const CACHE = `hellmed-${VERSION}`;
 
 // Archivos esenciales que se guardan al instalar (rutas relativas: sirve en GitHub Pages)
@@ -70,7 +74,8 @@ self.addEventListener('fetch', (event) => {
   if (!url.protocol.startsWith('http')) return;
 
   // La API de Supabase (login) y el APK NUNCA se cachean: van directo a la red
-  if (url.hostname.endsWith('.supabase.co') || url.pathname.endsWith('.apk')) return;
+  if (url.hostname.endsWith('.supabase.co') || url.pathname.endsWith('.apk') ||
+      url.pathname.endsWith('.zip') || url.pathname.endsWith('.exe')) return;
 
   // a) Navegación (abrir una página): red primero; si no hay internet, caché; si tampoco, offline.html
   if (req.mode === 'navigate') {
